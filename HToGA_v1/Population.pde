@@ -54,7 +54,6 @@ class Population {
         return false;
       }
     }
-
     return true;
   }
 
