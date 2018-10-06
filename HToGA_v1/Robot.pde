@@ -1,4 +1,4 @@
-class Dot {
+class Robot {
   PVector pos;
   PVector vel;
   PVector acc;
@@ -10,13 +10,20 @@ class Dot {
 
   float fitness = 0;
 
-  Dot() {
+  Block[] blks;
+
+  Robot() {
     brain = new Brain(1000);//new brain with 1000 instructions
 
     //start the dots at the bottom of the window with a no velocity or acceleration
-    pos = new PVector(width/2, height- 10);
+    pos = new PVector(width/2, height- 100);
     vel = new PVector(0, 0);
     acc = new PVector(0, 0);
+    
+    blks = new Block[4];
+    blks[1] = new Block();
+    
+    
   }
 
 
@@ -26,10 +33,10 @@ class Dot {
     //if this dot is the best dot from the previous generation then draw it as a big green dot
     if (isBest) {
       fill(0, 255, 0);
-      ellipse(pos.x, pos.y, 8, 8);
+      rect(pos.x, pos.y, 30, 30);
     } else {//all other dots are just smaller black dots
       fill(0);
-      ellipse(pos.x, pos.y, 4, 4);
+      rect(pos.x, pos.y, 30, 30);
     }
   }
 
@@ -51,7 +58,7 @@ class Dot {
   }
 
   //-------------------------------------------------------------------------------------------------------------------
-  //calls the move function and check for collisions and stuff
+  //calls the move function 
   void update() {
     if (!dead && !reachedGoal) {
       move();
@@ -60,12 +67,16 @@ class Dot {
       } else if (dist(pos.x, pos.y, goal.x, goal.y) < 5) {//if reached goal
 
         reachedGoal = true;
-      } else if (pos.x< 600 && pos.y < 310 && pos.x > 0 && pos.y > 300) {//if hit obstacle
-        dead = true;
+      //} else if (pos.x< 600 && pos.y < 310 && pos.x > 0 && pos.y > 300) {//if hit obstacle
+      //  dead = true;
       }
     }
   }
-
+  //-------------------------------------------------------------------------------------------------------------------
+  // check for collisions
+  void isCollide (){
+    
+  }
 
   //--------------------------------------------------------------------------------------------------------------------------------------
   //calculates the fitness
@@ -80,8 +91,8 @@ class Dot {
 
   //---------------------------------------------------------------------------------------------------------------------------------------
   //clone it 
-  Dot gimmeBaby() {
-    Dot baby = new Dot();
+  Robot gimmeBaby() {
+    Robot baby = new Robot();
     baby.brain = brain.clone();//babies have the same brain as their parents
     return baby;
   }

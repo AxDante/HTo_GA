@@ -6,4 +6,5 @@ class Obstacle{
     pos = pos_;
     size = size_;
   }
+  
 }
