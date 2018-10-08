@@ -12,16 +12,13 @@ class Block{
     heading = heading_;
     desHeading = heading_;
     blkWidth = blkWidth_;
+    
+    if (debugMode){
+      println("Block " + id + " created at position (x,y) = (" + pos.x + ", " + pos.y + ").");
+    }
   }
   
-  void Rotate(float angle, PVector posCtr){
-    heading = heading + angle;
-    //if (heading >= 2*PI){
-    //  heading = 0;
-    //}
-    PVector posToCenter = pos.sub(posCtr);
-    pos = pos.add(posToCenter.rotate(angle).sub(posToCenter));
-  }
+
   
   void Move(PVector vel){
     pos.add(vel);
@@ -30,13 +27,13 @@ class Block{
   PVector getCorner(int cornerId){
     PVector[] retCorner = new PVector[4];
     // Upper-right corner
-    retCorner[0] = pos.add(new PVector(-blkWidth * sqrt(2) / 2.0, 0).rotate(-PI/4+heading));
+    retCorner[0] = pos.copy().add(new PVector(-blkWidth * sqrt(2) / 2.0, 0).rotate(-PI/4+heading));
     // Upper-left corner
-    retCorner[1] = pos.add(new PVector(-blkWidth * sqrt(2) / 2.0, 0).rotate(PI/4+heading));
+    retCorner[1] = pos.copy().add(new PVector(-blkWidth * sqrt(2) / 2.0, 0).rotate(PI/4+heading));
     // Bottom-left corner
-    retCorner[2] = pos.add(new PVector(-blkWidth * sqrt(2) / 2.0, 0).rotate(3*PI/4+heading));
+    retCorner[2] = pos.copy().add(new PVector(-blkWidth * sqrt(2) / 2.0, 0).rotate(3*PI/4+heading));
     // Bottom-right corner
-    retCorner[3] = pos.add(new PVector(-blkWidth * sqrt(2) / 2.0, 0).rotate(-3*PI/4+heading));
+    retCorner[3] = pos.copy().add(new PVector(-blkWidth * sqrt(2) / 2.0, 0).rotate(-3*PI/4+heading));
     return retCorner[cornerId];
   }
 }

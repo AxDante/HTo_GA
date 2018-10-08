@@ -4,7 +4,15 @@ Obstacle[] Obss;
 
 boolean debugMode = true;
 
+float rotAngVel = PI/12.0;  // Rotation angular velocity
+float rotThreshold = PI/22.0;
+
+
 void setup() {
+  
+  size(800, 800); //size of the window
+  frameRate(5);//increase this to make the dots go faster
+  
   
   if (debugMode){
     Robot r = new Robot();
@@ -18,30 +26,35 @@ void setup() {
     println("b1, posx: " + r.Blks[1].pos.x + " posy:" + r.Blks[1].pos.y+ " ang:" + r.Blks[1].heading + " desAng:" + r.Blks[1].desHeading);
     println("b2, posx: " + r.Blks[2].pos.x + " posy:" + r.Blks[2].pos.y+ " ang:" + r.Blks[2].heading + " desAng:" + r.Blks[2].desHeading);
     println("b3, posx: " + r.Blks[3].pos.x + " posy:" + r.Blks[3].pos.y+ " ang:" + r.Blks[3].heading + " desAng:" + r.Blks[3].desHeading);
+    
+    
+    //println("ur, posx: " + new PVector(-1 * sqrt(2) / 2.0, 0).rotate(-PI/4+0.5*PI).x + " posy:" + new PVector(-1 * sqrt(2) / 2.0, 0).rotate(-PI/4+0.5*PI).y);
+    //println("ul, posx: " + new PVector(-1 * sqrt(2) / 2.0, 0).rotate(PI/4+0.5*PI).x + " posy:" + new PVector(-1 * sqrt(2) / 2.0, 0).rotate(PI/4+0.5*PI).y);
+    //println("bl, posx: " + new PVector(-1 * sqrt(2) / 2.0, 0).rotate(3*PI/4+0.5*PI).x + " posy:" + new PVector(-1 * sqrt(2) / 2.0, 0).rotate(-3*PI/4+0.5*PI).y);
+    //println("br, posx: " + new PVector(-1 * sqrt(2) / 2.0, 0).rotate(-3*PI/4+0.5*PI).x + " posy:" + new PVector(-1 * sqrt(2) / 2.0, 0).rotate(-3*PI/4+0.5*PI).y);
+    
     //r.pos = new PVector(300, 300);
     
-  
-  }else if (!debugMode){
-    
-    size(800, 800); //size of the window
-    frameRate(100);//increase this to make the dots go faster
-    
-    int totPopulation = 1000;
-    
-    Obss = new Obstacle[3];
-    Obss[0] = new Obstacle(new PVector(0, 300), new PVector(600, 10));
-    Obss[1] = new Obstacle(new PVector(300,500), new PVector(500, 10));
-    Obss[2] = new Obstacle(new PVector(500,100), new PVector(100, 100));
-    
-    test = new Population(totPopulation, Obss);//create a new population with 1000 members
   }
+    
+  int totPopulation = 1;
+    
+  Obss = new Obstacle[3];
+  Obss[0] = new Obstacle(new PVector(0, 300), new PVector(600, 10));
+  Obss[1] = new Obstacle(new PVector(300,500), new PVector(500, 10));
+  Obss[2] = new Obstacle(new PVector(500,100), new PVector(100, 100));
+    
+  test = new Population(totPopulation, Obss);//create a new population with 1000 members
+
+  
 }
 
 
 void draw() { 
-  if (!debugMode){
-    background(255);
   
+  background(255);
+  
+  if (debugMode){
     //draw goal
     fill(255, 0, 0);
     ellipse(goal.x, goal.y, 10, 10);
