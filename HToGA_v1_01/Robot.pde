@@ -19,7 +19,7 @@ class Robot {
   Robot() {
     
     Morph = new Morphology();
-    brain = new Brain(1000);//new brain with 1000 instructions
+      brain = new Brain(1001);//new brain with 1000 instructions
 
     //start the dots at the bottom of the window with a no velocity or acceleration
     pos = new PVector(width/2, height- 100);
@@ -142,6 +142,7 @@ class Robot {
   //-----------------------------------------------------------------------------------------------------------------------
   //moves the dot according to the brains directions
   void move() {
+    updateBlockDesHeading();
     if (brain.Cmds.length > brain.step) {  //if there are still directions left then set the acceleration as the next PVector in the direcitons array
       if (!shapeShift()){
         acc = brain.Cmds[brain.step].moveDir;
@@ -160,8 +161,6 @@ class Robot {
       dead = true;
     }
   
-
-    
   }
 
   //-------------------------------------------------------------------------------------------------------------------
@@ -169,9 +168,9 @@ class Robot {
   void update() {
     if (!dead && !reachedGoal) {
       move();
-      if (pos.x < blkWidth/2.0|| pos.y < blkWidth/2.0 || pos.x > width - blkWidth/2.0 || pos.y > height - blkWidth/2.0) { //if near the edges of the window then kill it 
+      if (Blks[1].pos.x < blkWidth/2.0|| Blks[1].pos.y < blkWidth/2.0 || Blks[1].pos.x > width - blkWidth/2.0 || Blks[1].pos.y > height - blkWidth/2.0) { //if near the edges of the window then kill it 
         dead = true;
-      } else if (dist(pos.x, pos.y, goal.x, goal.y) < 5) {//if reached goal
+      } else if (dist(Blks[1].pos.x, Blks[1].pos.y, goal.x, goal.y) < 5) {//if reached goal
         reachedGoal = true;
       }
     }
@@ -180,13 +179,12 @@ class Robot {
   //--------------------------------------------------------------------------------------------------------------------------------------
   // mutate
   void mutate(){
-    for (int i = 0; i < brain.directions.length; i++) {
+    for (int i = 0; i < brain.Cmds.length; i++) {
       float rand = random(1);
       if (rand < baseMutTransRate){
         int randMorph = floor(random(7));
         morph = randMorph;
         brain.Cmds[i].transMorph = randMorph;
-        updateBlockDesHeading();
       }else if (rand < baseMutMoveRate) {
         //set this direction as a random direction 
         float randomAngle = random(2*PI);
@@ -203,7 +201,7 @@ class Robot {
     if (reachedGoal) {//if the dot reached the goal then the fitness is based on the amount of steps it took to get there
       fitness = 1.0/16.0 + 10000.0/(float)(brain.step * brain.step);
     } else {//if the dot didn't reach the goal then the fitness is based on how close it is to the goal
-      float distanceToGoal = dist(pos.x, pos.y, goal.x, goal.y);
+      float distanceToGoal = dist(Blks[1].pos.x, Blks[1].pos.y, goal.x, goal.y);
       fitness = 1.0/(distanceToGoal * distanceToGoal);
     }
   }

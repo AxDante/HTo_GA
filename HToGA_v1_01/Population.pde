@@ -168,9 +168,7 @@ class Population {
         return Rbts[i];
       }
     }
-
     //should never get to this point
-
     return null;
   }
 
