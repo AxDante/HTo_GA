@@ -44,10 +44,15 @@ class Population {
   //-------------------------------------------------------------------------------------------------------------------------------
   // check for collisions
   boolean isCollide(Robot rbt) {
-    for (int obsidx = 0; obsidx< Obss.length; obsidx++) {
-      if (isRectIntersect(rbt.pos, new PVector (30, 30), 0, Obss[obsidx].pos, Obss[obsidx].size, 0)){
-        return true;
+    for (int obsidx = 0; obsidx < Obss.length; obsidx++) {
+      for (int blkidx = 0; blkidx < rbt.Blks.length; blkidx++){
+        for (int coridx = 0; coridx < 4; coridx++){
+          if (isPointInRect(rbt.Blks[blkidx].getCorner(coridx), ))
+        }
       }
+      //if (isRectIntersect(rbt.pos, new PVector (30, 30), 0, Obss[obsidx].pos, Obss[obsidx].size, 0)){
+      //  return true;
+      //}
     }
     return false;
   }

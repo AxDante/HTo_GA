@@ -1,8 +1,8 @@
 Population test;
-PVector goal  = new PVector(400, 10);
+PVector goal  = new PVector(400, 40);
 Obstacle[] Obss;
 
-boolean debugMode = true;
+boolean debugMode = false;
 
 float rotAngVel = PI/12.0;  // Rotation angular velocity
 float rotThreshold = PI/22.0;
@@ -11,7 +11,7 @@ float rotThreshold = PI/22.0;
 void setup() {
   
   size(800, 800); //size of the window
-  frameRate(5);//increase this to make the dots go faster
+  frameRate(100);//increase this to make the dots go faster
   
   
   if (debugMode){
@@ -37,10 +37,10 @@ void setup() {
     
   }
     
-  int totPopulation = 1;
+  int totPopulation = 1000;
     
   Obss = new Obstacle[3];
-  Obss[0] = new Obstacle(new PVector(0, 300), new PVector(600, 10));
+  Obss[0] = new Obstacle(new PVector(0, 300), new PVector(200, 10));
   Obss[1] = new Obstacle(new PVector(300,500), new PVector(500, 10));
   Obss[2] = new Obstacle(new PVector(500,100), new PVector(100, 100));
     
@@ -54,7 +54,6 @@ void draw() {
   
   background(255);
   
-  if (debugMode){
     //draw goal
     fill(255, 0, 0);
     ellipse(goal.x, goal.y, 10, 10);
@@ -78,5 +77,4 @@ void draw() {
       test.update();
       test.show();
     }
-  }
 }

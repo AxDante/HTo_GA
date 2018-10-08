@@ -11,9 +11,9 @@ class Robot {
   float fitness = 0;
 
   Block[] Blks;
-  int morph = 1;
+  int morph = 3;
   Morphology Morph;
-  float blkWidth = 15;
+  float blkWidth = 20;
 
   Robot() {
     
@@ -99,10 +99,8 @@ class Robot {
     Blks[blkId].pos.add(posShift);
     
     if (blkId == 2){
-      Blks[3].pos.add(posShift);
+      Rotate(3, angle, posCtr);
     }
-    
-    
     if(debugMode){
       println("Block " + blkId + " Rotation:");
       println("posCtr (x,y) = (" + posCtr.x + ", " + posCtr.y +").");
@@ -112,12 +110,6 @@ class Robot {
     }
   }
   
-  
-  
-  
-  
-  
-
 
   //-----------------------------------------------------------------------------------------------------------------
   //draws the dot on the screen
