@@ -10,9 +10,14 @@ class Robot {
 
   float fitness = 0;
 
-  Block[] blks;
+  Block[] Blks;
+  int morph = 1;
+  Morphology Morph;
+  float blkWidth = 15;
 
   Robot() {
+    
+    Morph = new Morphology();
     brain = new Brain(1000);//new brain with 1000 instructions
 
     //start the dots at the bottom of the window with a no velocity or acceleration
@@ -20,23 +25,62 @@ class Robot {
     vel = new PVector(0, 0);
     acc = new PVector(0, 0);
     
-    blks = new Block[4];
-    blks[1] = new Block();
     
-    
+    Blks = new Block[4];
+    for(int blkidx = 0; blkidx < 4; blkidx++){
+      //Blks[blkidx] = new Block(blkidx, pos, 0);
+    }
+    Blks[0] = new Block(0, blkWidth , pos.add(new PVector(blkWidth,0)), 0);
+    Blks[1] = new Block(1, blkWidth , pos.add(new PVector(0,0)), 0);
+    Blks[2] = new Block(2, blkWidth , pos.add(new PVector(blkWidth,0)), 0);
+    Blks[3] = new Block(3, blkWidth , pos.add(new PVector(blkWidth,0)), 0);
+    updateBlockDesHeading();
+  }
+  
+  //-----------------------------------------------------------------------------------------------------------------
+  // update desired heading to each robot blocks
+  void updateBlockDesHeading(){
+    int modMorph = morph % 7;
+    int divMorph = floor((morph-1)/7);
+    for(int blkidx = 0; blkidx < 4; blkidx++){
+      float newHeading = Morph.RelAng[modMorph][blkidx] - divMorph * PI/2;
+      // Set desired heading of each block according to the array values
+      Blks[blkidx].desHeading = newHeading;
+    }
+    shapeShift();
+  }
+
+  //-----------------------------------------------------------------------------------------------------------------
+  // perform robot shape-shifting
+  void shapeShift(){
+    if (Blks[0].heading != Blks[0].desHeading){
+      Blks[0].Rotate(Blks[0].desHeading-Blks[0].heading, Blks[1].getCorner(3));
+    }
+    if (Blks[1].heading != Blks[1].desHeading){
+     // Blks[1].Rotate(Blks[1].desHeading-Blks[1].heading, Blks[1].getCorner(3));
+    }
+    if (Blks[2].heading != Blks[2].desHeading){
+      Blks[2].Rotate(Blks[2].desHeading-Blks[3].heading, Blks[1].getCorner(0));
+    }
+    if (Blks[3].heading != Blks[3].desHeading){
+      Blks[3].Rotate(Blks[3].desHeading-Blks[3].heading, Blks[2].getCorner(1));
+    }
   }
 
 
   //-----------------------------------------------------------------------------------------------------------------
   //draws the dot on the screen
   void show() {
+    shapeShift();
     //if this dot is the best dot from the previous generation then draw it as a big green dot
     if (isBest) {
-      fill(0, 255, 0);
-      rect(pos.x, pos.y, 30, 30);
+      for (int blkidx = 0; blkidx < Blks.length; blkidx++){
+        fill(0, 255, 0);
+        rect(Blks[blkidx].pos.x, Blks[blkidx].pos.y, Blks[blkidx].blkWidth, Blks[blkidx].blkWidth);
+      }
     } else {//all other dots are just smaller black dots
       fill(0);
-      rect(pos.x, pos.y, 30, 30);
+      rect(pos.x, pos.y, 10, 10);
     }
   }
 
