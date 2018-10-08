@@ -5,10 +5,12 @@ Obstacle[] Obss;
 boolean debugMode = false;
 boolean gridBasedMode = true;
 
+
 float rotAngVel = PI/12.0;  // Rotation angular velocity
 float rotThreshold = PI/22.0; // Rotation threshold angle for the robot to stop 
-float baseMutMoveRate = 0.01; // Mutation rate of robot moving direction
-float baseMutTransRate = 0.03; // Mutation rate of robt transformation
+float baseMutMoveRate = 0.005; // Mutation rate of robot moving direction
+float baseMutTransRate = 0.001; // Mutation rate of robt transformation
+float moveTransRatio = 20.0;
 
 void setup() {
  

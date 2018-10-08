@@ -160,7 +160,6 @@ class Population {
   Robot selectParent() {
     float rand = random(fitnessSum);
 
-
     float runningSum = 0;
 
     for (int i = 0; i< Rbts.length; i++) {
@@ -179,7 +178,7 @@ class Population {
   //mutates all the brains of the babies
   void mutateDemBabies() {
     for (int i = 1; i< Rbts.length; i++) {
-      Rbts[i].brain.mutate();
+      Rbts[i].mutate();
     }
   }
 

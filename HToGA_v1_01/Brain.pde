@@ -1,37 +1,38 @@
 class Brain {
-  PVector[] directions;//series of vectors which get the dot to the goal (hopefully)
+  
+  Command[] Cmds;
+  
   int step = 0;
 
-
   Brain(int size) {
-    directions = new PVector[size];
-    randomize();
+    Cmds = new Command[size];
+    randomizeCmds(); 
   }
 
   //--------------------------------------------------------------------------------------------------------------------------------
   //sets all the vectors in directions to a random vector with length 1
-  void randomize() {
-    for (int i = 0; i< directions.length; i++) {
-      float randomAngle = random(2*PI);
-      directions[i] = PVector.fromAngle(randomAngle);
+  void randomizeCmds() {
+
+    for (int idxcmd = 0; idxcmd < Cmds.length; idxcmd++) {
+      float randomNum = random(1);
+      if (randomNum < 1/moveTransRatio){
+        int randMorph = floor(random(7));
+        Cmds[idxcmd] = new Command(new PVector(0, 0), randMorph);
+      } else {
+        float randomAngle = random(2*PI);
+        Cmds[idxcmd] = new Command(PVector.fromAngle(randomAngle), -1);
+      }
     }
   }
 
   //-------------------------------------------------------------------------------------------------------------------------------------
   //returns a perfect copy of this brain object
   Brain clone() {
-    Brain clone = new Brain(directions.length);
-    for (int i = 0; i < directions.length; i++) {
-      clone.directions[i] = directions[i].copy();
+    Brain clone = new Brain(Cmds.length);
+    for (int i = 0; i < Cmds.length; i++) {
+      clone.Cmds[i] = new Command(Cmds[i].moveDir, Cmds[i].transMorph);
     }
-
     return clone;
   }
 
-  //----------------------------------------------------------------------------------------------------------------------------------------
-
-  //mutates the brain by setting some of the directions to random vectors
-  void mutate() {
-  
-  }
 }

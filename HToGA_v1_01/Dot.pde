@@ -37,8 +37,8 @@ class Dot {
   //moves the dot according to the brains directions
   void move() {
 
-    if (brain.directions.length > brain.step) {//if there are still directions left then set the acceleration as the next PVector in the direcitons array
-      acc = brain.directions[brain.step];
+    if (brain.Cmds.length > brain.step) {//if there are still directions left then set the acceleration as the next PVector in the direcitons array
+      acc = brain.Cmds[brain.step].moveDir;
       brain.step++;
     } else {//if at the end of the directions array then the dot is dead
       dead = true;

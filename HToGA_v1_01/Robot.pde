@@ -42,6 +42,11 @@ class Robot {
   //-----------------------------------------------------------------------------------------------------------------
   // update desired heading to each robot blocks
   void updateBlockDesHeading(){
+    int newMorph = brain.Cmds[brain.step].transMorph;
+    if (newMorph != -1 && newMorph != morph){
+      morph = newMorph;
+    }
+    
     int modMorph = morph % 7;
     int divMorph = floor((morph-1)/7);
     for(int blkidx = 0; blkidx < 4; blkidx++){
@@ -49,12 +54,11 @@ class Robot {
       // Set desired heading of each block according to the array values
       Blks[blkidx].desHeading = newHeading;
     }
-    //shapeShift();
   }
 
   //-----------------------------------------------------------------------------------------------------------------
   // perform robot shape-shifting
-  void shapeShift(){
+  boolean shapeShift(){
     if (debugMode){
       println("r, posx: " + pos.x + " posy:" + pos.y );
       println("b0, posx: " + Blks[0].pos.x + " posy:" + Blks[0].pos.y+ " ang:" + Blks[0].heading + " desAng:" + Blks[0].desHeading);
@@ -63,7 +67,6 @@ class Robot {
       println("b3, posx: " + Blks[3].pos.x + " posy:" + Blks[3].pos.y+ " ang:" + Blks[3].heading + " desAng:" + Blks[3].desHeading);
     }
     
-    
     if (abs(Blks[0].heading - Blks[0].desHeading) > rotThreshold){
       // Block 2 rotates with respect to bottom-right corner of block 1
       float rotateAng = (Blks[0].desHeading > Blks[0].heading)? rotAngVel : -rotAngVel;
@@ -71,9 +74,11 @@ class Robot {
       if (debugMode){
         println("Block 0 rotating w.r.t. (x,y) = (" + Blks[1].getCorner(3).x + ", " +Blks[1].getCorner(3).y+ ").");
       }
+      return true;
     }
     else if (abs(Blks[1].heading - Blks[1].desHeading) > rotThreshold){
      // Blks[1].Rotate(Blks[1].desHeading-Blks[1].heading, Blks[1].getCorner(3));
+     return true;
     }
     else if (abs(Blks[2].heading - Blks[2].desHeading) > rotThreshold){
       // Block 2 rotates with respect to upper-right corner of block 1
@@ -82,6 +87,7 @@ class Robot {
       if (debugMode){
         println("Block 2 rotating w.r.t. (x,y) = (" + Blks[1].getCorner(0).x + ", " +Blks[1].getCorner(0).y+ ").");
       }
+      return true;
     }
     else if (abs(Blks[3].heading - Blks[3].desHeading) > rotThreshold){
       // Block 3 rotates with respect to upper-left corner of block 2
@@ -90,7 +96,9 @@ class Robot {
       if (debugMode){
         println("Block 3 rotating w.r.t. (x,y) = (" + Blks[2].getCorner(1).x + ", " +Blks[2].getCorner(1).y+ ").");
       }
+      return true;
     }
+    return false;
   }
   
   void Rotate(int blkId, float angle, PVector posCtr){
@@ -134,22 +142,26 @@ class Robot {
   //-----------------------------------------------------------------------------------------------------------------------
   //moves the dot according to the brains directions
   void move() {
-    shapeShift();
-    if (brain.directions.length > brain.step) {//if there are still directions left then set the acceleration as the next PVector in the direcitons array
-      acc = brain.directions[brain.step];
+    if (brain.Cmds.length > brain.step) {  //if there are still directions left then set the acceleration as the next PVector in the direcitons array
+      if (!shapeShift()){
+        acc = brain.Cmds[brain.step].moveDir;
+        //apply the acceleration and move the dot
+        vel.add(acc);
+        vel.limit(5);//not too fast
+        pos.add(vel);
+          
+        for (int blkidx = 0; blkidx < Blks.length; blkidx++){
+          Blks[blkidx].pos.add(vel);
+        }
+      }
       brain.step++;
-    } else {//if at the end of the directions array then the dot is dead
+      
+    } else {  //if at the end of the directions array then the dot is dead
       dead = true;
     }
+  
 
-    //apply the acceleration and move the dot
-    vel.add(acc);
-    vel.limit(5);//not too fast
-    pos.add(vel);
     
-    for (int blkidx = 0; blkidx < Blks.length; blkidx++){
-      Blks[blkidx].pos.add(vel);
-    }
   }
 
   //-------------------------------------------------------------------------------------------------------------------
@@ -157,35 +169,28 @@ class Robot {
   void update() {
     if (!dead && !reachedGoal) {
       move();
-      if (pos.x < blkWidth/2.0|| pos.y < blkWidth/2.0 || pos.x > width - blkWidth/2.0 || pos.y > height - blkWidth/2.0) {//if near the edges of the window then kill it 
+      if (pos.x < blkWidth/2.0|| pos.y < blkWidth/2.0 || pos.x > width - blkWidth/2.0 || pos.y > height - blkWidth/2.0) { //if near the edges of the window then kill it 
         dead = true;
       } else if (dist(pos.x, pos.y, goal.x, goal.y) < 5) {//if reached goal
-
         reachedGoal = true;
-      //} else if (pos.x< 600 && pos.y < 310 && pos.x > 0 && pos.y > 300) {//if hit obstacle
-      //  dead = true;
       }
     }
   }
-  //-------------------------------------------------------------------------------------------------------------------
-  // check for collisions
-  void isCollide (){
-    
-  }
-
+  
+  //--------------------------------------------------------------------------------------------------------------------------------------
+  // mutate
   void mutate(){
-    
-    
     for (int i = 0; i < brain.directions.length; i++) {
       float rand = random(1);
       if (rand < baseMutTransRate){
         int randMorph = floor(random(7));
         morph = randMorph;
+        brain.Cmds[i].transMorph = randMorph;
         updateBlockDesHeading();
       }else if (rand < baseMutMoveRate) {
         //set this direction as a random direction 
         float randomAngle = random(2*PI);
-        brain.directions[i] = PVector.fromAngle(randomAngle);
+        brain.Cmds[i].moveDir = PVector.fromAngle(randomAngle);
       }
     }
   }
