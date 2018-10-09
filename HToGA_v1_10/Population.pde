@@ -106,7 +106,7 @@ class Population {
 
   //------------------------------------------------------------------------------------------------------------------------------------
   //returns whether all the dots are either dead or have reached the goal
-  boolean allDotsDead() {
+  boolean allRobotsDead() {
     for (int i = 0; i< Rbts.length; i++) {
       if (!Rbts[i].dead && !Rbts[i].reachedGoal) { 
         return false;
