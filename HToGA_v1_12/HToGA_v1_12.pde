@@ -24,7 +24,7 @@ float baseMutTransRate = 0.0001; // Mutation rate of robt transformation
 float moveTransRatio = 300.0;
 
 int frameRefreshRate = 100;
-int totPopulation = 1;
+int totPopulation = 3;
 int minStep = 1000;
 float blkWidth = 20;
 

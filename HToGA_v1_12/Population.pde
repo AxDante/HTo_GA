@@ -205,16 +205,18 @@ class Population {
   void setbestRobot() {
     float max = 0;
     int maxIndex = 0;
+    println("=======================");
+    
     for (int i = 0; i< Rbts.length; i++) {
+      println("Robot No. " + i );
+      println("Reached Goal: " + Rbts[i].reachedGoal + "; bestTime: " + Rbts[i].brain.bestTime + " ; bestFitness: " + Rbts[i].brain.bestFitness) ;
       if (Rbts[i].fitness > max) {
         max = Rbts[i].fitness;
         maxIndex = i;
-        println("=======================");
-        println("Robot No. " + i );
-        println("Reached Goal: " + Rbts[i].reachedGoal + "; bestTime: " + Rbts[i].brain.bestTime + " ; bestFitness: " + Rbts[i].brain.bestFitness) ;
       }
     }
-
+    println("Best Robot this gen is robot " + maxIndex);
+    
     bestRobot = maxIndex;
     //if this dot reached the goal then reset the minimum number of steps it takes to get to the goal
     if (Rbts[bestRobot].reachedGoal) {
