@@ -18,7 +18,7 @@ class Robot {
   Robot() {
     
     Morph = new Morphology();
-      brain = new Brain(1001);//new brain with 1000 instructions
+    brain = new Brain(1000);//new brain with 1000 instructions
 
     //start the dots at the bottom of the window with a no velocity or acceleration
     pos = new PVector(map.Wps[currentWpID].pos.x, map.Wps[currentWpID].pos.y);
@@ -174,14 +174,18 @@ class Robot {
   void mutate(){
     for (int i = 0; i < brain.Cmds.length; i++) {
       float rand = random(1);
-      if (rand < baseMutTransRate){
+      if (rand < baseMutTransRate && mutTransProcess){
         int randMorph = floor(random(7));
         morph = randMorph;
         brain.Cmds[i].transMorph = randMorph;
       }else if (rand < baseMutMoveRate) {
-        //set this direction as a random direction 
-        float randomAngle = random(2*PI);
-        brain.Cmds[i].moveDir = PVector.fromAngle(randomAngle);
+        if (!gridBasedMode){
+          float randomAngle = random(2*PI);
+          brain.Cmds[i].moveDir = PVector.fromAngle(randomAngle);
+        }else{
+          float randomAngle = ((int)random(4))*PI/2;
+          brain.Cmds[i].moveDir = PVector.fromAngle(randomAngle).mult(blkWidth);
+        }
       }
     }
   }
