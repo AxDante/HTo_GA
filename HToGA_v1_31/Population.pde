@@ -1,11 +1,11 @@
 class Population {
   
+  Robot[] prevGoodRbts;
   Robot[] Rbts;
   Obstacle[] Obss;
 
   float fitnessSum;
   int gen = 0;
-  
 
   int bestRobot = 0;//the index of the best dot in the dots[]
 
@@ -193,7 +193,6 @@ class Population {
     for (int i = 1; i< newRbts.length; i++) {
       //select parent based on fitness
       Robot parent = selectParent();
-
       //get baby from them
       newRbts[i] = parent.gimmeBaby();
     }
@@ -209,6 +208,7 @@ class Population {
     for (int i = 0; i< Rbts.length; i++) {
       fitnessSum += Rbts[i].fitness;
     }
+   
   }
 
   //-------------------------------------------------------------------------------------------------------------------------------------
@@ -217,9 +217,8 @@ class Population {
   Robot selectParent() {
     float rand = random(fitnessSum);
     float runningSum = 0;
-
     for (int i = 0; i< Rbts.length; i++) {
-      runningSum+= Rbts[i].fitness;
+      runningSum += Rbts[i].fitness;
       if (runningSum > rand) {
         return Rbts[i];
       }
@@ -228,12 +227,54 @@ class Population {
   }
 
   //------------------------------------------------------------------------------------------------------------------------------------------
-  //mutates all the brains of the babies
-  void mutateDemBabies() {
+  //mutate
+  void GAMutation() {
     for (int i = 1; i< Rbts.length; i++) {
-      Rbts[i].mutate();
+      for (int cmdidx = 0; cmdidx < Rbts[i].brain.Cmds.length; cmdidx++) {
+        float rand = random(1);
+        if (rand < baseMutTransRate && mutTransProcess){
+          int randMorph = floor(random(7));
+          //Rbts[i].morph = randMorph;
+          Rbts[i].brain.Cmds[cmdidx].transMorph = randMorph;
+        }else if (rand < baseMutMoveRate) {
+          if (!gridBasedMode){
+            float randomAngle = random(2*PI);
+            Rbts[i].brain.Cmds[cmdidx].moveDir = PVector.fromAngle(randomAngle);
+          }else{
+            float randomAngle = ((int)random(4))*PI/2;
+            Rbts[i].brain.Cmds[cmdidx].moveDir = PVector.fromAngle(randomAngle).mult(blkWidth);
+          }
+        }
+      }
     }
   }
+  
+  void GACrossover() {
+    for (int i = 1; i< Rbts.length; i++) {
+      if (random(1) < baseCrossoverRate){
+        Robot parent = selectParent();
+        Robot anotherRbt  = parent.gimmeBaby();
+        println("dsf" + Rbts[i].fitness);
+        int cutPoint = floor(random(bestTime));
+        Command[] newCmd = Rbts[i].brain.Cmds;
+        for (int cmdidx = cutPoint; cmdidx < newCmd.length; cmdidx++){
+          println(cmdidx);
+          newCmd[cmdidx] = newCmd[cmdidx];
+          anotherRbt.brain.Cmds[cmdidx] = anotherRbt.brain.Cmds[cmdidx];
+        }
+      }
+    }
+  }
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   //---------------------------------------------------------------------------------------------------------------------------------------------
   //finds the dot with the highest fitness and sets it as the best dot

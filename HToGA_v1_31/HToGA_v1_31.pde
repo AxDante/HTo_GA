@@ -19,12 +19,18 @@ boolean noRepeatingGrids = true;
 
 float rotAngVel = PI/12.0;  // Rotation angular velocity
 float rotThreshold = PI/22.0; // Rotation threshold angle for the robot to stop 
-float baseMutMoveRate = 0.005; // Mutation rate of robot moving direction
-float baseMutTransRate = 0.0001; // Mutation rate of robt transformation
-float moveTransRatio = 300.0;
+
+
+float baseMutMoveRate = 0; //0.05; // Mutation rate of robot moving direction
+float baseMutTransRate = 0; //0.005; // Mutation rate of robt transformation
+float baseCrossoverRate = 0.15;
+float moveTransRatio = 100.0;
+
+float bestPercentage = 0.1;
+
 
 int frameRefreshRate = 500;
-int totPopulation = 200;
+int totPopulation = 10;
 float blkWidth = 25;
 
 void settings() {
@@ -73,8 +79,8 @@ void draw() {
       println("Navigation " + test.gen + " result:" );
       test.calculateFitness();
       test.naturalSelection();
-      test.mutateDemBabies();
-      
+      test.GAMutation();
+      test.GACrossover();
       println("==================================");
       if (test.isConverged()){
         if (currentWpID < map.Wps.length-2){
