@@ -21,16 +21,16 @@ float rotAngVel = PI/12.0;  // Rotation angular velocity
 float rotThreshold = PI/22.0; // Rotation threshold angle for the robot to stop 
 
 
-float baseMutMoveRate = 0; //0.05; // Mutation rate of robot moving direction
+float baseMutMoveRate = 0.01; //0.05; // Mutation rate of robot moving direction
 float baseMutTransRate = 0; //0.005; // Mutation rate of robt transformation
-float baseCrossoverRate = 0.15;
+float baseCrossoverRate = 0.5;
 float moveTransRatio = 100.0;
 
 float bestPercentage = 0.1;
 
 
 int frameRefreshRate = 500;
-int totPopulation = 10;
+int totPopulation = 100;
 float blkWidth = 25;
 
 void settings() {

@@ -226,6 +226,20 @@ class Population {
     return null;
   }
 
+  Robot[] tournamentSelect(){
+    
+    
+    Robot[] winRbts = new Robot[2];
+    int[] randRbtID = new int[4];
+    for (int rbtidx = 0; rbtidx < 4; rbtidx++){
+      randRbtID[rbtidx] = floor(random(Rbts.length));
+    }
+    winRbts[0] = (Rbts[randRbtID[0]].fitness > Rbts[randRbtID[1]].fitness)? Rbts[randRbtID[0]] : Rbts[randRbtID[1]];
+    winRbts[1] = (Rbts[randRbtID[2]].fitness > Rbts[randRbtID[3]].fitness)? Rbts[randRbtID[2]] : Rbts[randRbtID[3]];
+    return winRbts;
+  }
+
+
   //------------------------------------------------------------------------------------------------------------------------------------------
   //mutate
   void GAMutation() {
@@ -252,29 +266,28 @@ class Population {
   void GACrossover() {
     for (int i = 1; i< Rbts.length; i++) {
       if (random(1) < baseCrossoverRate){
-        Robot parent = selectParent();
-        Robot anotherRbt  = parent.gimmeBaby();
-        println("dsf" + Rbts[i].fitness);
+        Robot[] parents = tournamentSelect();
+        Robot childRbt = parents[0];
         int cutPoint = floor(random(bestTime));
-        Command[] newCmd = Rbts[i].brain.Cmds;
-        for (int cmdidx = cutPoint; cmdidx < newCmd.length; cmdidx++){
-          println(cmdidx);
-          newCmd[cmdidx] = newCmd[cmdidx];
-          anotherRbt.brain.Cmds[cmdidx] = anotherRbt.brain.Cmds[cmdidx];
+        for (int cmdidx = 0; cmdidx < cutPoint; cmdidx++){
+          //childRbt.brain.Cmds[cmdidx] = parents[0].brain.Cmds[cmdidx];
+          childRbt.brain.Cmds[cmdidx] = Rbts[bestRobot].brain.Cmds[cmdidx];
         }
+        for (int cmdidx = cutPoint; cmdidx < childRbt.brain.Cmds.length; cmdidx++){
+          childRbt.brain.Cmds[cmdidx] = parents[1].brain.Cmds[cmdidx];
+        }
+        //Robot parent = selectParent();
+        //Robot anotherRbt  = parent.gimmeBaby();
+        
+        //Command[] newCmd = Rbts[i].brain.Cmds;
+        //for (int cmdidx = cutPoint; cmdidx < newCmd.length; cmdidx++){
+        //  newCmd[cmdidx] = newCmd[cmdidx];
+        //  childRbt.brain.Cmds[cmdidx] = childRbt.brain.Cmds[cmdidx];
+        //}
+        Rbts[i].brain = childRbt.brain.clone();
       }
     }
   }
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
 
   //---------------------------------------------------------------------------------------------------------------------------------------------
   //finds the dot with the highest fitness and sets it as the best dot

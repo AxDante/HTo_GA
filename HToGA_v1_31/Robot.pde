@@ -147,6 +147,7 @@ class Robot {
   Robot gimmeBaby() {
     Robot baby = new Robot();
     baby.brain = brain.clone();//babies have the same brain as their parents
+    baby.fitness = fitness;
     return baby;
   }
 }
