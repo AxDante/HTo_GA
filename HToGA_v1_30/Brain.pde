@@ -25,7 +25,7 @@ class Brain {
         }else{
           int randInt = random(4);
           PVector[] randDirArray = new PVector[]{PVector(0,blkWidth), PVector(0,-blkWidth), PVector(blkWidth,0), PVector(-blkWidth,0)};
-          PVector[] randDir = randDirArray[randInt]
+          PVector[] randDir = randDirArray[randInt];
         if (noRepeatingGrids){
          
           
