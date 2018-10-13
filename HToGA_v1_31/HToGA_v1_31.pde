@@ -1,7 +1,7 @@
 Population test;
 MapDB mapDB;
 Map map;
-int mapID = 0;
+int mapID = 1;
 int currentWpID = 0;
 int time = 0;
 
@@ -43,25 +43,22 @@ void settings() {
 }
 
 void setup(){
-  
   test = new Population(totPopulation, 1000 , map.Obss);
   frameRate(frameRefreshRate);
-  
 }
 
 void draw() { 
-  
   background(255);
   // draw goal
   fill(255, 0, 0);
-  for (int wpidx = 0; wpidx < mapDB.Wps.length ; wpidx++){
-    ellipse(mapDB.Wps[wpidx].pos.x, mapDB.Wps[wpidx].pos.y, 10, 10);
+  for (int wpidx = 0; wpidx < map.Wps.length ; wpidx++){
+    ellipse(map.Wps[wpidx].pos.x, map.Wps[wpidx].pos.y, 10, 10);
   }
   
   // draw obstacle(s)
   fill(0, 0, 255);
   for (int intobs = 0; intobs < mapDB.Obss.length; intobs++){
-    rect(mapDB.Obss[intobs].pos.x, mapDB.Obss[intobs].pos.y, mapDB.Obss[intobs].size.x, mapDB.Obss[intobs].size.y);
+    rect(map.Obss[intobs].pos.x, map.Obss[intobs].pos.y, map.Obss[intobs].size.x, map.Obss[intobs].size.y);
   }
   
   // draw grid

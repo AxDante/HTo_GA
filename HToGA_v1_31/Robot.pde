@@ -13,7 +13,7 @@ class Robot {
   float fitness = 0;
 
   Block[] Blks;
-  int morph = 2;
+  int morph = 0;
   Morphology Morph;
   
   Robot() {
