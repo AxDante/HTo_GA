@@ -1,6 +1,7 @@
 Population test;
 MapDB mapDB;
 Map map;
+
 int mapID = 1;
 int currentWpID = 0;
 int time = 0;
@@ -19,7 +20,6 @@ boolean noRepeatingGrids = true;
 float rotAngVel = PI/12.0;  // Rotation angular velocity
 float rotThreshold = PI/22.0; // Rotation threshold angle for the robot to stop 
 
-
 float baseMutMoveRate = 0.01; //0.05; // Mutation rate of robot moving direction
 float baseMutTransRate = 0; //0.005; // Mutation rate of robt transformation
 float baseCrossoverRate = 0.5;
@@ -30,6 +30,12 @@ float bestPercentage = 0.1;
 int frameRefreshRate = 500;
 int totPopulation = 100;
 float blkWidth = 25;
+int mapW, mapH;
+float diag = (float)Math.sqrt(2);
+
+Grid[][] grids;
+ArrayList<Grid> open = new ArrayList<Grid>();
+ArrayList<Grid> closed = new ArrayList<Grid>();
 
 void settings() {
   
@@ -37,7 +43,8 @@ void settings() {
   map = mapDB.Maps[mapID];
   
   size((int)map.mapSize.x, (int)map.mapSize.y); //size of the window
-  
+  mapW = (int)(map.mapSize.x/blkWidth);
+  mapH = (int)(map.mapSize.y/blkWidth);
 }
 
 void setup(){
