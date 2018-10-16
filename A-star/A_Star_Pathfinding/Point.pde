@@ -83,6 +83,7 @@ public class Point {
   
   public double getF() {
     return f;
+    println("position (x,y) = (" + x + ", " + y + ")  f value: " + f);
   }
   
   public void show() {

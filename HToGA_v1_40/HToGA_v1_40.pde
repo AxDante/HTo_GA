@@ -43,16 +43,36 @@ void settings() {
   map = mapDB.Maps[mapID];
   
   size((int)map.mapSize.x, (int)map.mapSize.y); //size of the window
-  mapW = (int)(map.mapSize.x/blkWidth);
-  mapH = (int)(map.mapSize.y/blkWidth);
+
 }
 
 void setup(){
   test = new Population(totPopulation, 1000 , map.Obss);
   frameRate(frameRefreshRate);
+  
+  mapW = (int)(map.mapSize.x/blkWidth);
+  mapH = (int)(map.mapSize.y/blkWidth);
+  grids = new Grid[mapH][mapW];
+  
+  for (int i = 0; i < grids.length; i++) {
+    for (int j = 0; j < grids[i].length; j++) {
+      grids[i][j] = new Grid (i, j, map.Obss);
+      grids[i][j].heuristic();
+    }
+  }
+  
+  
+  closed.add(grids[0][0]);
+  grids[0][0].g = 0;
+  grids[0][0].checked = true;
+  grids[0][0].link();
+  grids[mapW-1][mapH-1].isWall = false;
+  
 }
 
 void draw() { 
+  
+  /*
   background(255);
   // draw goal
   fill(255, 0, 0);
@@ -62,7 +82,7 @@ void draw() {
   
   // draw obstacle(s)
   fill(0, 0, 255);
-  for (int intobs = 0; intobs < mapDB.Obss.length; intobs++){
+  for (int intobs = 0; intobs < map.Obss.length; intobs++){
     rect(map.Obss[intobs].pos.x, map.Obss[intobs].pos.y, map.Obss[intobs].size.x, map.Obss[intobs].size.y);
   }
   
@@ -101,4 +121,59 @@ void draw() {
       time++;
     }
   }
+  */
+  
+    background(255);
+  for (int i = 0; i < grids.length; i++) {
+    for (int j = 0; j < grids[i].length; j++) {
+      grids[i][j].calcF();
+      
+      if (grids[i][j].isWall) {
+        fill(0);
+        rect((i)*(blkWidth), j*(blkWidth), blkWidth, blkWidth);
+      } else if (grids[i][j].checked) {
+        fill(153);
+        rect((i)*(blkWidth), j*(blkWidth), blkWidth, blkWidth);
+      } else {
+        fill(255);
+        rect((i)*(blkWidth), j*(blkWidth), blkWidth, blkWidth);
+      }
+      fill(0);
+      textSize(32);
+      //  text("" + points[i][j].f, (i)*blkWidth, (j+1)*blkWidth);
+    }
+  }
+  
+  fill(255, 0, 0);
+  rect(0, 0, blkWidth, blkWidth);
+  
+  fill(0, 255, 0);
+  rect((mapW-1)*blkWidth, (mapH-1)*blkWidth, blkWidth, blkWidth);
+  
+  if (open.size() == 0) {
+    noLoop();
+  }
+  
+  Grid lowest = getMin();
+  if (lowest == null) {
+    System.out.println("?");
+    noLoop();
+  }
+  closed.add(lowest);
+  open.remove(lowest);
+  lowest.link();
+  lowest.show();
+  
+  if (open.size() == 0) {
+    noLoop();
+    println("Not solvable");
+  }
+  
+  for (int i = 0; i < open.size(); i++) {
+    if (open.get(i) == grids[mapH-1][mapW-1]) {
+      open.get(i).show();
+      noLoop();
+    }
+  }
+  
 }

@@ -62,14 +62,14 @@ public class Grid {
     parent = p;
   }
   
-  public Grid (int xcord, int ycord) {
+  public Grid (int xcord, int ycord, Obstacle[] Obss) {
     x = xcord;
     y = ycord;
-    float chance = random(2);
-    if (chance < 1) {
-      isWall = true;
-    } else {
-      isWall = false;
+    for (int intobs = 0; intobs < Obss.length; intobs++){
+      if (x > Obss[intobs].pos.x && x < Obss[intobs].pos.x +  Obss[intobs].size.x &&
+      y > Obss[intobs].pos.y && y < Obss[intobs].pos.y +  Obss[intobs].size.y){
+        isWall = true;
+      }
     }
   }
   
@@ -92,4 +92,26 @@ public class Grid {
       parent.show();
     }
   }
+  
+  
+  
+  
+  
+  
+}
+
+
+
+
+Grid getMin() {
+  if (open.size() > 0) {
+    Grid min = open.get(0);
+    for (int i = 1; i < open.size(); i++) {
+      if (open.get(i).getF() < min.getF()) {
+        min = open.get(i);
+      }
+    }
+    return min;
+  }
+  return null;
 }

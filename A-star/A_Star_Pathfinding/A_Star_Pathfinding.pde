@@ -8,7 +8,7 @@ ArrayList<Point> open = new ArrayList<Point>();
 ArrayList<Point> closed = new ArrayList<Point>();
 
 void setup () {
-  frameRate(240);
+  frameRate(1000);
   size(700, 700);
   w = width/scl;
   he = height/scl;
@@ -83,9 +83,6 @@ void draw () {
 }
 
 Point getMin() {
-  
-  
-  
   if (open.size() > 0) {
     Point min = open.get(0);
     for (int i = 1; i < open.size(); i++) {

@@ -7,6 +7,13 @@ class Waypoint{
     morph = morph_;
   }
   
+  PVector wpToGrid(PVector mapSize){
+    PVector gridPos = new PVector();
+    gridPos.x = floor((pos.x % mapSize.x)/blkWidth);
+    gridPos.y = floor( pos.y / blkWidth );
+    return gridPos;
+  }
+  
 }
 
 class Map{
