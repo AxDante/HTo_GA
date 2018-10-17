@@ -66,8 +66,8 @@ public class Grid {
     x = xcord;
     y = ycord;
     for (int intobs = 0; intobs < Obss.length; intobs++){
-      if (x*blkWidth > Obss[intobs].pos.x && x*blkWidth < Obss[intobs].pos.x +  Obss[intobs].size.x &&
-      y*blkWidth > Obss[intobs].pos.y && y*blkWidth < Obss[intobs].pos.y +  Obss[intobs].size.y){
+      if (x*blkWidth >= Obss[intobs].pos.x && x*blkWidth < Obss[intobs].pos.x +  Obss[intobs].size.x &&
+      y*blkWidth >= Obss[intobs].pos.y && y*blkWidth < Obss[intobs].pos.y +  Obss[intobs].size.y){
         isWall = true;
         //println("Wall at grid position (x,y) = (" + x + ", " + y + ").");
       }

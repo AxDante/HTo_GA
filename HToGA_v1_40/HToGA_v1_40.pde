@@ -34,6 +34,8 @@ int mapW, mapH;
 float diag = (float)Math.sqrt(2);
 
 Grid[][] grids;
+int[] startGrid;
+int[] goalGrid;
 ArrayList<Grid> open = new ArrayList<Grid>();
 ArrayList<Grid> closed = new ArrayList<Grid>();
 
@@ -53,6 +55,12 @@ void setup(){
   mapW = (int)(map.mapSize.x/blkWidth);
   mapH = (int)(map.mapSize.y/blkWidth);
   grids = new Grid[mapH][mapW];
+  startGrid = map.Wps[0].wpToGrid(map.mapSize);
+  goalGrid = map.Wps[map.Wps.length-1].wpToGrid(map.mapSize);
+  
+  println(" -- A* Search -- ");
+  println("Starting Grid = (" + startGrid[0] + "," + startGrid[1] + ").\t" +
+          "Goal Grid = (" + goalGrid[0] + "," + goalGrid[1] + ").");
   
   for (int i = 0; i < grids.length; i++) {
     for (int j = 0; j < grids[i].length; j++) {
@@ -61,12 +69,9 @@ void setup(){
     }
   }
   
+  closed.add(grids[startGrid[0]][startGrid[1]]);
   
-  closed.add(grids[0][0]);
-  grids[0][0].g = 0;
-  grids[0][0].checked = true;
-  grids[0][0].link();
-  grids[mapW-1][mapH-1].isWall = false;
+  grids[startGrid[0]][startGrid[1]].link();
   
 }
 
@@ -94,7 +99,8 @@ void draw() {
   for (int colidx = 0; colidx <= (int)map.mapSize.y/blkWidth; colidx++){
     line(0, colidx*blkWidth,  map.mapSize.x, colidx*blkWidth);
   }
-  
+  */
+  /*
   //for(int wpidx = 0; wpidx < map.Wps.length; wpidx++){
   if (!terminate){
     if (test.allRobotsDead()) {
@@ -123,7 +129,7 @@ void draw() {
   }
   */
   
-    background(255);
+  background(255);
   for (int i = 0; i < grids.length; i++) {
     for (int j = 0; j < grids[i].length; j++) {
       grids[i][j].calcF();
@@ -150,6 +156,7 @@ void draw() {
   fill(0, 255, 0);
   rect((mapW-1)*blkWidth, (mapH-1)*blkWidth, blkWidth, blkWidth);
   
+  
   if (open.size() == 0) {
     noLoop();
   }
@@ -159,6 +166,7 @@ void draw() {
     System.out.println("?");
     noLoop();
   }
+  
   closed.add(lowest);
   open.remove(lowest);
   lowest.link();
@@ -170,7 +178,7 @@ void draw() {
   }
   
   for (int i = 0; i < open.size(); i++) {
-    if (open.get(i) == grids[mapH-1][mapW-1]) {
+    if (open.get(i) == grids[goalGrid[0]][goalGrid[1]]) {
       open.get(i).show();
       noLoop();
     }
