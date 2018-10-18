@@ -13,6 +13,7 @@ class Population {
   int bestTime;
   float bestFitness;
   
+  
   Population(int size, int minStep_,  Obstacle[] Obss_) {
     Obss = Obss_;
     bestTime = minStep_;
@@ -64,7 +65,8 @@ class Population {
             for (int grididx = 2; grididx <= 10; grididx += 2){
               if (curRbt.Blks[1].pos.x == curRbt.brain.pastPos[time - grididx].x && curRbt.Blks[1].pos.y == curRbt.brain.pastPos[time - grididx].y){
                 //println("died because of repeating grids at position " + curRbt.Blks[1].pos.x + "," + curRbt.Blks[1].pos.y);
-                //curRbt.dead = true;
+                
+                //curRbt.dead = true; 
               }
             }
           }
@@ -155,7 +157,6 @@ class Population {
   //-----------------------------------------------------------------------------------------------------------------------------------
   //calculate all the fitnesses
   void calculateFitness() {
-    //println("Calculating fitness");
     for (int i = 0; i< Rbts.length; i++) {
       if (Rbts[i].reachedGoal) {
         Rbts[i].fitness = 10 + 10000.0/(float)(Rbts[i].brain.curTime * Rbts[i].brain.curTime);
@@ -202,6 +203,22 @@ class Population {
 
 
   //-------------------------------------------------------------------------------------------------------------------------------------
+
+
+  void updateStepFitness(){
+    float max = 0;
+    int maxIndex = 0;
+
+    for (int i = 0; i< Rbts.length; i++) {
+      if (Rbts[i].fitness > max) {
+        max = Rbts[i].fitness;
+        maxIndex = i;
+      }
+    }
+    bestRobot = maxIndex;
+  }
+
+
 
   //gets the next generation of dots
   void naturalSelection() {
@@ -312,16 +329,6 @@ class Population {
   //---------------------------------------------------------------------------------------------------------------------------------------------
   //finds the dot with the highest fitness and sets it as the best dot
   void setbestRobot() {
-    float max = 0;
-    int maxIndex = 0;
-
-    for (int i = 0; i< Rbts.length; i++) {
-      if (Rbts[i].fitness > max) {
-        max = Rbts[i].fitness;
-        maxIndex = i;
-      }
-    }
-    bestRobot = maxIndex;
     
     if (Rbts[bestRobot].reachedGoal) {
       bestTime = Rbts[bestRobot].brain.curTime;
