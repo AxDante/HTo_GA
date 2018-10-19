@@ -126,8 +126,15 @@ class Robot {
     updateBlockDesHeading();
     shapeShift();
     if (!shapeShifting){
-      vel = brain.Cmds[time].moveDir;
-      pos.add(vel);
+      if (!gridBasedMode){
+        acc = brain.Cmds[time].moveDir;
+        vel.add(acc);
+        vel.limit(5);
+        pos.add(vel);
+      }else if (gridBasedMode){
+        vel = brain.Cmds[time].moveDir;
+        pos.add(vel);
+      }
       for (int blkidx = 0; blkidx < Blks.length; blkidx++){
         Blks[blkidx].pos.add(vel);
       }

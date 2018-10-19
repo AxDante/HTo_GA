@@ -70,7 +70,7 @@ class Population {
             curRbt.brain.curTime += 1;
           }
         }
-        if (noRepeatingGrids){
+        if (gridBasedMode && noRepeatingGrids){
           curRbt.brain.pastPos[time] = Rbts[rbtidx].pos;
         }
       }
@@ -247,13 +247,18 @@ class Population {
           //Rbts[i].morph = randMorph;
           Rbts[i].brain.Cmds[cmdidx].transMorph = randMorph;
         }else if (rand < MutMoveRate) {
-          int randomDist = (int)random(2);
-          int randInt = (int)random(4);
-          PVector[] randDirArray = new PVector[]{new PVector(0,blkWidth), new PVector(0,-blkWidth), new PVector(blkWidth,0), new PVector(-blkWidth,0)};
-          PVector randDir = randDirArray[randInt];
-          while (randomDist >= 0 && cmdidx+randomDist < Rbts[i].brain.Cmds.length){
-            Rbts[i].brain.Cmds[cmdidx+randomDist].moveDir = randDir;
-            randomDist -= 1;
+          if (!gridBasedMode){
+            float randomAngle = random(2*PI);
+            Rbts[i].brain.Cmds[cmdidx].moveDir = PVector.fromAngle(randomAngle);
+          }else{
+            int randomDist = (int)random(2);
+            int randInt = (int)random(4);
+            PVector[] randDirArray = new PVector[]{new PVector(0,blkWidth), new PVector(0,-blkWidth), new PVector(blkWidth,0), new PVector(-blkWidth,0)};
+            PVector randDir = randDirArray[randInt];
+            while (randomDist >= 0 && cmdidx+randomDist < Rbts[i].brain.Cmds.length){
+              Rbts[i].brain.Cmds[cmdidx+randomDist].moveDir = randDir;
+              randomDist -= 1;
+            }
           }
         }
       }

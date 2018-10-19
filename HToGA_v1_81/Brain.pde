@@ -1,11 +1,11 @@
 class Brain {
   
-  Command[] Cmds;
+  String[] Cmds;
   PVector[] pastPos; 
   int curTime = 0; 
   
   Brain(int size) {
-    Cmds = new Command[size];
+    Cmds = new String[size];
     pastPos = new PVector[size];
     randomizeCmds(); 
   }
@@ -17,15 +17,14 @@ class Brain {
       float randomNum = random(1);
       if (randomNum < 1/moveTransRatio && mutTransInitialze){
         int randMorph = floor(random(7));
-        Cmds[idxcmd] = new Command(new PVector(0, 0), randMorph);
+        //Cmds[idxcmd] = new Command(new PVector(0, 0), randMorph);
       } else {
         int randInt = (int)random(4);
-        PVector[] randDirArray = new PVector[]{new PVector(0,blkWidth), new PVector(0,-blkWidth), new PVector(blkWidth,0), new PVector(-blkWidth,0)};
-        PVector randDir = randDirArray[randInt];
+        PVector randDir = fourDirArray[randInt];
         if(noRepeatingGrids){
           PVector sumDir = randDir.copy();
           boolean validDir = false;
-          while (!validDir){
+          while (!validDir){ 
             validDir = true;
             if (idxcmd < 7){
               validDir = true;
@@ -35,7 +34,7 @@ class Brain {
                 if (sumDir.x == 0 && sumDir.y == 0){
                   validDir = false;
                   randInt = (int)random(4);
-                  randDir = randDirArray[randInt];
+                  randDir = fourDirArray[randInt];
                   sumDir = randDir.copy();
                   break;
                 }

@@ -2,11 +2,12 @@ Population test;
 MapDB mapDB;
 Map map;
 
-int mapID = 3;
+int mapID = 4;
 int currentWpID = 0;
 int time = 0;
 
 boolean debugMode = false;
+boolean gridBasedMode = true;
 boolean terminate = false;
 
 boolean mutTransInitialze = false;
@@ -80,14 +81,23 @@ void draw() {
   
   
   // Draw waypoints
-  
-  fill(255, 0, 0);
-  for (int wpidx = 0; wpidx < map.Wps.length ; wpidx++){
-    rect(map.Wps[wpidx].pos.x, map.Wps[wpidx].pos.y, blkWidth, blkWidth);
+  if (!gridBasedMode){
+    fill(255, 0, 0);
+    for (int wpidx = 0; wpidx < map.Wps.length ; wpidx++){
+      ellipse(map.Wps[wpidx].pos.x, map.Wps[wpidx].pos.y, 10, 10);
+    }
+    fill(255, 153, 50);
+    ellipse(map.Wps[currentWpID+1].pos.x, map.Wps[currentWpID+1].pos.y, 10, 10);
+    
+  }else if (gridBasedMode){
+    fill(255, 0, 0);
+    for (int wpidx = 0; wpidx < map.Wps.length ; wpidx++){
+      rect(map.Wps[wpidx].pos.x, map.Wps[wpidx].pos.y, blkWidth, blkWidth);
+    }
+    
+    fill(255, 153, 50);
+    rect(map.Wps[currentWpID+1].pos.x, map.Wps[currentWpID+1].pos.y, blkWidth, blkWidth);
   }
-  fill(255, 153, 50);
-  rect(map.Wps[currentWpID+1].pos.x, map.Wps[currentWpID+1].pos.y, blkWidth, blkWidth);
-  
   
   // draw obstacle(s)
   fill(0, 0, 255);

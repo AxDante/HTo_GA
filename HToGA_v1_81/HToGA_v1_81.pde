@@ -43,6 +43,10 @@ double[][] AstarFitness;
 int[][] gridObsTable;
 PFont dispFont;
 
+PVector[] fourDirArray = new PVector[]{new PVector(0,blkWidth), new PVector(0,-blkWidth), new PVector(blkWidth,0), new PVector(-blkWidth,0)};
+
+
+
 void settings() {
   
   mapDB = new MapDB();
@@ -198,4 +202,21 @@ void updateObstacleTable(){
       }
     }
   }
+}
+
+float[] cmdDecipher(String s){
+  float[] returnCmd = new float[3];
+  switch(s){
+    case "R":
+      break;
+    case "L":
+      break;
+    case "B":
+      break;
+    case "F":
+      break;
+    case "S":
+      break;
+  }
+  return returnCmd;
 }
