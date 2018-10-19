@@ -2,7 +2,7 @@ Population test;
 MapDB mapDB;
 Map map;
 
-int mapID = 1;
+int mapID = 2;
 int currentWpID = 0;
 int time = 0;
 
@@ -13,12 +13,15 @@ boolean terminate = false;
 boolean mutTransInitialze = false;
 boolean mutTransProcess = false;
 
+boolean progressingFitness = true;
+
 boolean noRepeatingGrids = true;
 
 float rotAngVel = PI/12.0;  // Rotation angular velocity
 float rotThreshold = PI/22.0; // Rotation threshold angle for the robot to stop 
 
-float baseMutMoveRate = 0.1; //0.05; // Mutation rate of robot moving direction
+float baseMutMoveRate = 0.003; //0.05; // Mutation rate of robot moving direction
+float MutMoveRate;
 float baseMutTransRate = 0; //0.005; // Mutation rate of robt transformation
 float baseCrossoverRate = 0.0;
 float moveTransRatio = 100.0;
@@ -101,10 +104,7 @@ void draw() {
   for (int intobs = 0; intobs < map.Obss.length; intobs++){
     rect(map.Obss[intobs].pos.x, map.Obss[intobs].pos.y, map.Obss[intobs].size.x, map.Obss[intobs].size.y);
   }
-  
-  
-  
-  
+ 
   
   // draw grids
   stroke(125);
@@ -137,11 +137,16 @@ void mainLoop(){
           terminate = true;
         }
       }
+      test.resetFitness();
       time = 0;
     } else {
       test.update();
+      if (progressingFitness){
+        test.calculateFitness();
+      }
       test.show();
       time++;
+      MutMoveRate = baseMutMoveRate*1.2;
     }
   }
 }

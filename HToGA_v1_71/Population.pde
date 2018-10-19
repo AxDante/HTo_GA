@@ -45,32 +45,17 @@ class Population {
       curRbt = Rbts[rbtidx];
       if (!curRbt.dead){
         if (curRbt.brain.curTime > bestTime){
-          //println("died because of timeout");
           curRbt.dead = true;
         }
         if (isCollide(Rbts[rbtidx])){
-          //println("died because obstacle collision");
           //curRbt.dead = true;
         } 
         if (isCollideGrid(Rbts[rbtidx])){
-          //println("died because obstacle collision");
           curRbt.dead = true;
         } 
         if (curRbt.Blks[1].pos.x < blkWidth/2.0|| curRbt.Blks[1].pos.y < blkWidth/2.0 || curRbt.Blks[1].pos.x > map.mapSize.x - blkWidth/2.0 || curRbt.Blks[1].pos.y > map.mapSize.y - blkWidth/2.0) { //if near the edges of the window then kill it 
-          //println("died because of wall collision");
           curRbt.dead = true;
         } 
-        if (noRepeatingGrids && !curRbt.shapeShifting){
-          if (time > 10){
-            for (int grididx = 2; grididx <= 10; grididx += 2){
-              if (curRbt.Blks[1].pos.x == curRbt.brain.pastPos[time - grididx].x && curRbt.Blks[1].pos.y == curRbt.brain.pastPos[time - grididx].y){
-                //println("died because of repeating grids at position " + curRbt.Blks[1].pos.x + "," + curRbt.Blks[1].pos.y);
-                
-                //curRbt.dead = true; 
-              }
-            }
-          }
-        }
       }
       if (!curRbt.dead){   
         if (!curRbt.reachedGoal){
@@ -84,13 +69,187 @@ class Population {
         if (gridBasedMode && noRepeatingGrids){
           curRbt.brain.pastPos[time] = Rbts[rbtidx].pos;
         }
-        if (!curRbt.reachedGoal && curRbt.fitness == 0){
-        //  print(" bestFitness " + curRbt.fitness);
+      }
+    }
+  }
+
+  //-----------------------------------------------------------------------------------------------------------------------------------
+  //calculate all the fitnesses
+  void calculateFitness() {
+    for (int i = 0; i< Rbts.length; i++) {
+      float tempFitness = 0;
+      if (Rbts[i].reachedGoal) {
+        tempFitness = 10 + 10000.0/(float)(Rbts[i].brain.curTime * Rbts[i].brain.curTime);
+      } else {
+        int[] gridPos = Rbts[i].Blks[1].blkGridPos(map.mapSize);
+        tempFitness = (float)(1/(1+pow((float)AstarFitness[gridPos[0]][gridPos[1]],3)));
+      }
+      if (progressingFitness){
+        if (tempFitness > Rbts[i].fitness){
+          Rbts[i].fitness = tempFitness;
+        }
+      }else{
+        Rbts[i].fitness = tempFitness;
+      }
+      //println("Robot " + nf(i,4) + " | ReachGoal: " + Rbts[i].reachedGoal + "  curTime: " + nf(Rbts[i].brain.curTime,3) + "  Fitness: " + nf(Rbts[i].fitness,1,7));
+    }
+  }
+  
+  void resetFitness() {
+    for (int i = 0; i< Rbts.length; i++) {
+      Rbts[i].fitness = 0;
+    }
+  }
+
+
+  //------------------------------------------------------------------------------------------------------------------------------------
+  //returns whether all the dots are either dead or have reached the goal
+  boolean allRobotsDead() {
+    for (int i = 0; i< Rbts.length; i++) {
+      if (!Rbts[i].dead && !Rbts[i].reachedGoal) { 
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  boolean isConverged() {
+    int minConvergeSample = 4;
+    int maxConvergeDiff = 0;
+    if (gen-1 > minConvergeSample) {
+      int genDiff = (StepData[gen-1-minConvergeSample] - StepData[gen-1]);
+      println("gen resutls difference:  " + genDiff);
+      if (StepData[gen-1-minConvergeSample] != -1 && (StepData[gen-1-minConvergeSample] - StepData[gen-1]) <= maxConvergeDiff){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  //-------------------------------------------------------------------------------------------------------------------------------------
+
+  void findBestFitness(){
+    float max = 0;
+    int maxIndex = 0;
+
+    for (int i = 0; i< Rbts.length; i++) {
+      if (Rbts[i].fitness > max) {
+        max = Rbts[i].fitness;
+        maxIndex = i;
+      }
+    }
+    bestRobot = maxIndex;
+  }
+
+
+  void naturalSelection() {
+    
+    Robot[] newRbts = new Robot[Rbts.length]; 
+
+    float max = 0;
+    int maxIndex = 0;
+
+    for (int i = 0; i< Rbts.length; i++) {
+      if (Rbts[i].fitness > max) {
+        max = Rbts[i].fitness;
+        maxIndex = i;
+      }
+    }
+    bestRobot = maxIndex;
+
+    if (Rbts[bestRobot].reachedGoal) {
+      bestTime = Rbts[bestRobot].brain.curTime;
+      StepData[gen] = bestTime;
+      println("bestTime:", bestTime);
+    }else{
+      StepData[gen] = -1;
+    }
+   
+    fitnessSum = 0;
+    for (int i = 0; i< Rbts.length; i++) {
+      fitnessSum += Rbts[i].fitness;
+    }
+    
+    newRbts[0] = Rbts[bestRobot].gimmeBaby();
+    newRbts[0].isBest = true;
+    for (int i = 1; i< newRbts.length; i++) {
+      Robot parent = selectParent();
+      newRbts[i] = parent.gimmeBaby();
+    }
+    Rbts = newRbts.clone();
+    gen ++;
+  }
+
+  //-------------------------------------------------------------------------------------------------------------------------------------
+
+  //chooses dot from the population to return randomly(considering fitness)
+  Robot selectParent() {
+    float rand = random(fitnessSum);
+    float runningSum = 0;
+    for (int i = 0; i< Rbts.length; i++) {
+      runningSum += Rbts[i].fitness;
+      if (runningSum > rand) {
+        return Rbts[i];
+      }
+    }
+    return null;
+  }
+
+
+  Robot[] tournamentSelect(){
+    Robot[] winRbts = new Robot[2];
+    int[] randRbtID = new int[4];
+    for (int rbtidx = 0; rbtidx < 4; rbtidx++){
+      randRbtID[rbtidx] = floor(random(Rbts.length));
+    }
+    winRbts[0] = (Rbts[randRbtID[0]].fitness > Rbts[randRbtID[1]].fitness)? Rbts[randRbtID[0]] : Rbts[randRbtID[1]];
+    winRbts[1] = (Rbts[randRbtID[2]].fitness > Rbts[randRbtID[3]].fitness)? Rbts[randRbtID[2]] : Rbts[randRbtID[3]];
+    return winRbts;
+  }
+
+
+  //------------------------------------------------------------------------------------------------------------------------------------------
+  //mutate
+  void GAMutation() {
+    for (int i = 1; i< Rbts.length; i++) {
+      for (int cmdidx = 0; cmdidx < Rbts[i].brain.Cmds.length; cmdidx++) {
+        float rand = random(1);
+        if (rand < baseMutTransRate && mutTransProcess){
+          int randMorph = floor(random(7));
+          //Rbts[i].morph = randMorph;
+          Rbts[i].brain.Cmds[cmdidx].transMorph = randMorph;
+        }else if (rand < MutMoveRate) {
+          if (!gridBasedMode){
+            float randomAngle = random(2*PI);
+            Rbts[i].brain.Cmds[cmdidx].moveDir = PVector.fromAngle(randomAngle);
+          }else{
+            float randomAngle = ((int)random(4))*PI/2;
+            Rbts[i].brain.Cmds[cmdidx].moveDir = PVector.fromAngle(randomAngle).mult(blkWidth);
+          }
         }
       }
     }
   }
   
+  void GACrossover() {
+    for (int i = 1; i< Rbts.length; i++) {
+      if (random(1) < baseCrossoverRate){
+        Robot[] parents = tournamentSelect();
+        Robot childRbt = parents[0];
+        int cutPoint = floor(random(bestTime));
+        for (int cmdidx = 0; cmdidx < cutPoint; cmdidx++){
+          //childRbt.brain.Cmds[cmdidx] = parents[0].brain.Cmds[cmdidx];
+          childRbt.brain.Cmds[cmdidx] = Rbts[bestRobot].brain.Cmds[cmdidx];
+        }
+        for (int cmdidx = cutPoint; cmdidx < childRbt.brain.Cmds.length; cmdidx++){
+          childRbt.brain.Cmds[cmdidx] = parents[1].brain.Cmds[cmdidx];
+        }
+        Rbts[i].brain = childRbt.brain.clone();
+      }
+    }
+  }
+
+    
   //-------------------------------------------------------------------------------------------------------------------------------
   // check for collisions
   boolean isCollideGrid(Robot rbt) {
@@ -152,190 +311,5 @@ class Population {
   float area(PVector pt1, PVector pt2, PVector pt3) { 
     return (float)Math.abs((pt1.x * (pt2.y - pt3.y) + pt2.x * (pt3.y - pt1.y) + pt3.x * (pt1.y - pt2.y)) / 2.0); 
   }
-
-
-  //-----------------------------------------------------------------------------------------------------------------------------------
-  //calculate all the fitnesses
-  void calculateFitness() {
-    for (int i = 0; i< Rbts.length; i++) {
-      if (Rbts[i].reachedGoal) {
-        Rbts[i].fitness = 10 + 10000.0/(float)(Rbts[i].brain.curTime * Rbts[i].brain.curTime);
-        //Rbts[i].fitness = 1.0/16.0 + 10000.0/(float)(Rbts[i].brain.curTime * Rbts[i].brain.curTime);
-      } else {
-        //println("posx posy" + Rbts[i].Blks[1].pos.x + "," + Rbts[i].Blks[1].pos.y);
-        int[] gridPos = Rbts[i].Blks[1].blkGridPos(map.mapSize);
-        print("finalPos  " + gridPos[0] + "," + gridPos[1] + "   ");
-        //println(" fitH " + (AstarFitness[gridPos[0]][gridPos[1]]));
-        
-        Rbts[i].fitness = (float)(1/(1+(AstarFitness[gridPos[0]][gridPos[1]])));
-        //float distanceToGoal = dist(Rbts[i].Blks[1].pos.x, Rbts[i].Blks[1].pos.y, map.Wps[currentWpID+1].pos.x, map.Wps[currentWpID+1].pos.y);
-        //Rbts[i].fitness = 1.0/(distanceToGoal * distanceToGoal);
-      }
-      println("Robot " + nf(i,4) + " | ReachGoal: " + Rbts[i].reachedGoal + "  curTime: " + nf(Rbts[i].brain.curTime,3) + "  Fitness: " + nf(Rbts[i].fitness,1,7));
-    }
-  }
-
-
-  //------------------------------------------------------------------------------------------------------------------------------------
-  //returns whether all the dots are either dead or have reached the goal
-  boolean allRobotsDead() {
-    for (int i = 0; i< Rbts.length; i++) {
-      if (!Rbts[i].dead && !Rbts[i].reachedGoal) { 
-        return false;
-      }
-    }
-    return true;
-  }
   
-  boolean isConverged() {
-    int minConvergeSample = 4;
-    int maxConvergeDiff = 0;
-    if (gen-1 > minConvergeSample) {
-      int genDiff = (StepData[gen-1-minConvergeSample] - StepData[gen-1]);
-      println("gen resutls difference:  " + genDiff);
-      if (StepData[gen-1-minConvergeSample] != -1 && (StepData[gen-1-minConvergeSample] - StepData[gen-1]) <= maxConvergeDiff){
-        return true;
-      }
-    }
-    return false;
-  }
-
-
-
-  //-------------------------------------------------------------------------------------------------------------------------------------
-
-
-  void updateStepFitness(){
-    float max = 0;
-    int maxIndex = 0;
-
-    for (int i = 0; i< Rbts.length; i++) {
-      if (Rbts[i].fitness > max) {
-        max = Rbts[i].fitness;
-        maxIndex = i;
-      }
-    }
-    bestRobot = maxIndex;
-  }
-
-
-
-  //gets the next generation of dots
-  void naturalSelection() {
-    Robot[] newRbts = new Robot[Rbts.length]; //next gen
-    setbestRobot();
-    calculateFitnessSum();
-    
-    //the champion lives on 
-    newRbts[0] = Rbts[bestRobot].gimmeBaby();
-    newRbts[0].isBest = true;
-    for (int i = 1; i< newRbts.length; i++) {
-      Robot parent = selectParent();
-      newRbts[i] = parent.gimmeBaby();
-    }
-    Rbts = newRbts.clone();
-    gen ++;
-  }
-
-
-  //--------------------------------------------------------------------------------------------------------------------------------------
-  //you get it
-  void calculateFitnessSum() {
-    fitnessSum = 0;
-    for (int i = 0; i< Rbts.length; i++) {
-      fitnessSum += Rbts[i].fitness;
-    }
-   
-  }
-
-  //-------------------------------------------------------------------------------------------------------------------------------------
-
-  //chooses dot from the population to return randomly(considering fitness)
-  Robot selectParent() {
-    float rand = random(fitnessSum);
-    float runningSum = 0;
-    for (int i = 0; i< Rbts.length; i++) {
-      runningSum += Rbts[i].fitness;
-      if (runningSum > rand) {
-        return Rbts[i];
-      }
-    }
-    return null;
-  }
-
-  Robot[] tournamentSelect(){
-    
-    
-    Robot[] winRbts = new Robot[2];
-    int[] randRbtID = new int[4];
-    for (int rbtidx = 0; rbtidx < 4; rbtidx++){
-      randRbtID[rbtidx] = floor(random(Rbts.length));
-    }
-    winRbts[0] = (Rbts[randRbtID[0]].fitness > Rbts[randRbtID[1]].fitness)? Rbts[randRbtID[0]] : Rbts[randRbtID[1]];
-    winRbts[1] = (Rbts[randRbtID[2]].fitness > Rbts[randRbtID[3]].fitness)? Rbts[randRbtID[2]] : Rbts[randRbtID[3]];
-    return winRbts;
-  }
-
-
-  //------------------------------------------------------------------------------------------------------------------------------------------
-  //mutate
-  void GAMutation() {
-    for (int i = 1; i< Rbts.length; i++) {
-      for (int cmdidx = 0; cmdidx < Rbts[i].brain.Cmds.length; cmdidx++) {
-        float rand = random(1);
-        if (rand < baseMutTransRate && mutTransProcess){
-          int randMorph = floor(random(7));
-          //Rbts[i].morph = randMorph;
-          Rbts[i].brain.Cmds[cmdidx].transMorph = randMorph;
-        }else if (rand < baseMutMoveRate) {
-          if (!gridBasedMode){
-            float randomAngle = random(2*PI);
-            Rbts[i].brain.Cmds[cmdidx].moveDir = PVector.fromAngle(randomAngle);
-          }else{
-            float randomAngle = ((int)random(4))*PI/2;
-            Rbts[i].brain.Cmds[cmdidx].moveDir = PVector.fromAngle(randomAngle).mult(blkWidth);
-          }
-        }
-      }
-    }
-  }
-  
-  void GACrossover() {
-    for (int i = 1; i< Rbts.length; i++) {
-      if (random(1) < baseCrossoverRate){
-        Robot[] parents = tournamentSelect();
-        Robot childRbt = parents[0];
-        int cutPoint = floor(random(bestTime));
-        for (int cmdidx = 0; cmdidx < cutPoint; cmdidx++){
-          //childRbt.brain.Cmds[cmdidx] = parents[0].brain.Cmds[cmdidx];
-          childRbt.brain.Cmds[cmdidx] = Rbts[bestRobot].brain.Cmds[cmdidx];
-        }
-        for (int cmdidx = cutPoint; cmdidx < childRbt.brain.Cmds.length; cmdidx++){
-          childRbt.brain.Cmds[cmdidx] = parents[1].brain.Cmds[cmdidx];
-        }
-        //Robot parent = selectParent();
-        //Robot anotherRbt  = parent.gimmeBaby();
-        
-        //Command[] newCmd = Rbts[i].brain.Cmds;
-        //for (int cmdidx = cutPoint; cmdidx < newCmd.length; cmdidx++){
-        //  newCmd[cmdidx] = newCmd[cmdidx];
-        //  childRbt.brain.Cmds[cmdidx] = childRbt.brain.Cmds[cmdidx];
-        //}
-        Rbts[i].brain = childRbt.brain.clone();
-      }
-    }
-  }
-
-  //---------------------------------------------------------------------------------------------------------------------------------------------
-  //finds the dot with the highest fitness and sets it as the best dot
-  void setbestRobot() {
-    
-    if (Rbts[bestRobot].reachedGoal) {
-      bestTime = Rbts[bestRobot].brain.curTime;
-      StepData[gen] = bestTime;
-      println("bestTime:", bestTime);
-    }else{
-      StepData[gen] = -1;
-    }
-  }
 }
