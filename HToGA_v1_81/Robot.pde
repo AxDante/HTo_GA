@@ -13,7 +13,7 @@ class Robot {
   float fitness = 0;
 
   Block[] Blks;
-  int morph = 0;
+  int morph = 1;
   Morphology Morph;
   
   Robot() {
@@ -39,21 +39,26 @@ class Robot {
   }
   
   //-----------------------------------------------------------------------------------------------------------------
-  // update desired heading to each robot blocks
+  //Update desired heading to each robot blocks
   void updateBlockDesHeading(){
     int newMorph = int(brain.Cmds[time]);
-    println(newMorph);
-    if (newMorph != -1 && newMorph != morph){
+    
+    //Moving -> No changes in morphology
+    if (newMorph == 0){ 
+      return;
+    //Changes in morphology
+    }else if (newMorph != morph){
       morph = newMorph;
     }
-    
+    //Perform shapeshifting
     int modMorph = morph % 7;
     int divMorph = floor((morph-1)/7);
     for(int blkidx = 0; blkidx < 4; blkidx++){
-      float newHeading = Morph.RelAng[modMorph][blkidx] - divMorph * PI/2;
+      float newHeading = Morph.RelAng[modMorph-1][blkidx] - divMorph * PI/2;
       // Set desired heading of each block according to the array values
       Blks[blkidx].desHeading = newHeading;
     }
+    
   }
 
   //-----------------------------------------------------------------------------------------------------------------
@@ -129,7 +134,14 @@ class Robot {
     if (!shapeShifting){
       
       float[] decipheredCmd = cmdDecipher(brain.Cmds[time]);
+      
       vel = new PVector (decipheredCmd[0], decipheredCmd[1]);
+      
+      //println("time: "+ time);
+      //println("Input command: " + brain.Cmds[time]);
+      //println("Deciphered command: (" +decipheredCmd[0] + ", " + decipheredCmd[1] + ", " +decipheredCmd[2] + ").");
+      //println("Added velocity: (" +vel.x + ", " + vel.y +").");
+      
       pos.add(vel);
       for (int blkidx = 0; blkidx < Blks.length; blkidx++){
         Blks[blkidx].pos.add(vel);

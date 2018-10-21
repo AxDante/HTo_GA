@@ -258,8 +258,8 @@ class Population {
         float rand = random(1);
         if (rand < baseMutTransRate && mutTransProcess){
           int randMorph = floor(random(7));
-          //Rbts[i].morph = randMorph;
-          //Rbts[i].brain.Cmds[cmdidx].transMorph = randMorph;
+          Rbts[i].morph = randMorph;
+          Rbts[i].brain.Cmds[cmdidx] = str(randMorph);
         }else if (rand < MutMoveRate) {
           int randomDist = (int)random(2);
           int randInt = (int)random(4);
