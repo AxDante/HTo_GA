@@ -43,9 +43,12 @@ double[][] AstarFitness;
 int[][] gridObsTable;
 PFont dispFont;
 
-PVector[] fourDirArray = new PVector[]{new PVector(0,blkWidth), new PVector(0,-blkWidth), new PVector(blkWidth,0), new PVector(-blkWidth,0)};
+PVector[] fourDirArray = new PVector[]{new PVector(0,-blkWidth), new PVector(blkWidth, 0), new PVector(0, blkWidth), new PVector(-blkWidth,0)};
+PVector[] eightDirArray = new PVector[]{new PVector(0,-blkWidth), new PVector(blkWidth, -blkWidth), new PVector(blkWidth, 0), new PVector(blkWidth, blkWidth), 
+                                         new PVector(0, blkWidth), new PVector(-blkWidth, blkWidth), new PVector(-blkWidth,0), new PVector(-blkWidth, -blkWidth)};
 
-
+String[] fourDirString = new String[]{"F", "R", "B", "L"};
+String[] eightDirString = new String[]{"F", "FR", "R", "BR", "B", "BL", "L", "FL"};
 
 void settings() {
   

@@ -20,6 +20,7 @@ class Brain {
         //Cmds[idxcmd] = new Command(new PVector(0, 0), randMorph);
       } else {
         int randInt = (int)random(4);
+        String randDirStr = fourDirString[randInt];
         PVector randDir = fourDirArray[randInt];
         if(noRepeatingGrids){
           PVector sumDir = randDir.copy();
@@ -30,7 +31,6 @@ class Brain {
               validDir = true;
             }else{
               for (int grididx = 1; grididx <= 7; grididx += 2){
-                sumDir.add(Cmds[idxcmd - grididx].moveDir);
                 if (sumDir.x == 0 && sumDir.y == 0){
                   validDir = false;
                   randInt = (int)random(4);
@@ -41,7 +41,7 @@ class Brain {
               }
             }
           }
-          Cmds[idxcmd] = new Command(randDir, -1);
+          Cmds[idxcmd] = fourDirString(randDir, -1);
           PVector testSum = new PVector(0,0);
           for (int nidx = 0; nidx < idxcmd; nidx++){
             testSum.add(Cmds[nidx].moveDir);
