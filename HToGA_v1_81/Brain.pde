@@ -41,13 +41,9 @@ class Brain {
               }
             }
           }
-          Cmds[idxcmd] = fourDirString(randDir, -1);
-          PVector testSum = new PVector(0,0);
-          for (int nidx = 0; nidx < idxcmd; nidx++){
-            testSum.add(Cmds[nidx].moveDir);
-          }
+          Cmds[idxcmd] = fourDirString[randInt];
         } else{
-          Cmds[idxcmd] = new Command(randDir, -1);
+          Cmds[idxcmd] = fourDirString[randInt];
         }
       }
     }
@@ -60,7 +56,7 @@ class Brain {
   Brain clone() {
     Brain clone = new Brain(Cmds.length);
     for (int i = 0; i < Cmds.length; i++) {
-      clone.Cmds[i] = new Command(Cmds[i].moveDir, Cmds[i].transMorph);
+      clone.Cmds[i] = Cmds[i];
     }
     return clone;
   } 

@@ -102,7 +102,6 @@ void draw() {
     rect(map.Obss[intobs].pos.x, map.Obss[intobs].pos.y, map.Obss[intobs].size.x, map.Obss[intobs].size.y);
   }
  
-  
   // draw grids
   stroke(125);
   for (int rowidx = 0; rowidx <= (int)map.mapSize.x/blkWidth; rowidx++){
@@ -144,12 +143,12 @@ void mainLoop(){
       test.show();
       time++;
       MutMoveRate = baseMutMoveRate;
+      //println("time: " + time);
     }
   }
 }
 
 void updateFitnessTable(int WpSeq){
-  
   boolean isDistFound;
   AstarFitness = new double[mapH][mapW];
   for (int sampx = 0; sampx < mapH; sampx++){

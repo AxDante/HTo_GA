@@ -71,7 +71,6 @@ public class Grid {
     if (x == startGrid[0] && y == startGrid[1]){
       g = 0;
       checked = true;
-      //link();
     }
     if (x == goalGrid[0] && y == goalGrid[1]){
       isWall = false;

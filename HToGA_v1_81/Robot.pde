@@ -41,7 +41,8 @@ class Robot {
   //-----------------------------------------------------------------------------------------------------------------
   // update desired heading to each robot blocks
   void updateBlockDesHeading(){
-    int newMorph = brain.Cmds[time].transMorph;
+    int newMorph = int(brain.Cmds[time]);
+    println(newMorph);
     if (newMorph != -1 && newMorph != morph){
       morph = newMorph;
     }
@@ -126,7 +127,9 @@ class Robot {
     updateBlockDesHeading();
     shapeShift();
     if (!shapeShifting){
-      vel = brain.Cmds[time].moveDir;
+      
+      float[] decipheredCmd = cmdDecipher(brain.Cmds[time]);
+      vel = new PVector (decipheredCmd[0], decipheredCmd[1]);
       pos.add(vel);
       for (int blkidx = 0; blkidx < Blks.length; blkidx++){
         Blks[blkidx].pos.add(vel);

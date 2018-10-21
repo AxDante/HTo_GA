@@ -62,8 +62,7 @@ class Population {
           if (dist(curRbt.Blks[1].pos.x, curRbt.Blks[1].pos.y, map.Wps[currentWpID+1].pos.x, map.Wps[currentWpID+1].pos.y) < 25) {
             curRbt.reachedGoal = true;
             for (int cmdidx = bestTime+1; cmdidx < curRbt.brain.Cmds.length; cmdidx++){
-              curRbt.brain.Cmds[cmdidx].moveDir = new PVector(0,0);
-              curRbt.brain.Cmds[cmdidx].transMorph = -1;
+              curRbt.brain.Cmds[cmdidx] = "S";
             }
           }else{
             curRbt.move();
@@ -166,6 +165,21 @@ class Population {
       StepData[gen] = bestTime;
       println("bestTime:", bestTime);
       println("Best Sequence:");
+      boolean reached = false;
+      String[] cmds = Rbts[bestRobot].brain.Cmds;
+      int cmdidx = 0;
+      while(!reached && cmdidx < cmds.length){
+        print (cmds[cmdidx] + " ");
+        if (cmds[cmdidx] == "S"){
+          reached = true;
+        }
+        if ((cmdidx+1)%50 == 0){
+          print("\n");
+        }
+        cmdidx++;
+      }
+      println();
+      /*
       Command[] cmds = Rbts[bestRobot].brain.Cmds;
       //println(cmds.length);
       boolean reached = false;
@@ -188,7 +202,7 @@ class Population {
         cmdidx++;
       }
       println();
-      
+      */
     }else{
       StepData[gen] = -1;
     }
@@ -245,14 +259,12 @@ class Population {
         if (rand < baseMutTransRate && mutTransProcess){
           int randMorph = floor(random(7));
           //Rbts[i].morph = randMorph;
-          Rbts[i].brain.Cmds[cmdidx].transMorph = randMorph;
+          //Rbts[i].brain.Cmds[cmdidx].transMorph = randMorph;
         }else if (rand < MutMoveRate) {
           int randomDist = (int)random(2);
           int randInt = (int)random(4);
-          PVector[] randDirArray = new PVector[]{new PVector(0,blkWidth), new PVector(0,-blkWidth), new PVector(blkWidth,0), new PVector(-blkWidth,0)};
-          PVector randDir = randDirArray[randInt];
           while (randomDist >= 0 && cmdidx+randomDist < Rbts[i].brain.Cmds.length){
-            Rbts[i].brain.Cmds[cmdidx+randomDist].moveDir = randDir;
+            Rbts[i].brain.Cmds[cmdidx+randomDist] = fourDirString[randInt];
             randomDist -= 1;
           }
         }
