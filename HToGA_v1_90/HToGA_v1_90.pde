@@ -2,7 +2,7 @@ Population test;
 MapDB mapDB;
 Map map;
 
-int mapID = 3;
+int mapID = 5;
 int currentWpID = 0;
 int time = 0;
 
@@ -20,8 +20,10 @@ boolean noRepeatingGrids = true;
 boolean robotPerception = true;
 int rbtPcepRad = 1;
 
-float Wobs = 0.1;
-float WgeneDir = 5;
+float Wobs = 0;
+float WgeneDir = 100;
+
+//------------------------
 
 //-------------------------
 

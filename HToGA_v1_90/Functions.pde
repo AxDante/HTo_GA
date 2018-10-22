@@ -73,23 +73,34 @@ float[] cmdDecipher(String inString){
       }
     }
   }
-
   return returnCmd;
 }
 
-boolean isCollideGrid(Robot rbt) {
+
+boolean isCollideRbt(Robot rbt) {
   int[] blkGrid;
   for (int blkidx = 0; blkidx < rbt.Blks.length; blkidx++){
     blkGrid = rbt.Blks[blkidx].blkGridPos(map.mapSize);
-    if (gridObsTable[blkGrid[0]][blkGrid[1]] == 1){
+    if (!isValidGrid(blkGrid)){
       return true;
     };
   }
   return false;
 }
 
+boolean isValidGrid(int[] blkGrid) {
+  if (gridObsTable[blkGrid[0]][blkGrid[1]] == 1){
+    return false;
+  }else if (blkGrid[0] >= mapW || blkGrid[1] >= mapH || blkGrid[0] < 0 || blkGrid[1] < 0){
+    return false;
+  }else{
+    return true;
+  }
+}
+
 int PortionSelect(float[] arr){
   
+  //println("IN(" + arr[0] + ","+ arr[1] + ","+ arr[2] + ","+ arr[3] + ")");
   float sums = 0;
   for (int arridx = 0; arridx < arr.length; arridx++){
     sums += arr[arridx];
@@ -99,8 +110,29 @@ int PortionSelect(float[] arr){
   for (int arridx = 0; arridx < arr.length; arridx++) {
     runningSum += arr[arridx];
     if (runningSum > rand) {
+      //println("OUT(" + arridx + ")");
       return arridx;
+      
     }
   }
   return -1;
+}
+
+int[] getGridID(PVector pos){
+  int[] gridPos = new int[2];
+  gridPos[0] = floor(pos.x/blkWidth);
+  gridPos[1] = floor(pos.y/blkWidth);
+  if (gridPos[0] >= mapW){
+    gridPos[0] = mapW -1;
+  }
+  if (gridPos[1] >= mapH){
+    gridPos[1] = mapH -1;
+  }
+  if (gridPos[0] < 0 ){
+    gridPos[0] = 0;
+  }
+  if (gridPos[1] < 0){
+    gridPos[1] = 0;
+  }
+  return gridPos;
 }

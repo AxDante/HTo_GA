@@ -136,13 +136,15 @@ class Robot {
       float[] decipheredCmd = cmdDecipher(brain.Cmds[time]);
       
       vel = new PVector (decipheredCmd[0], decipheredCmd[1]);
-      
-      //println("time: "+ time);
-      //println("Input command: " + brain.Cmds[time]);
-      //println("Deciphered command: (" +decipheredCmd[0] + ", " + decipheredCmd[1] + ", " +decipheredCmd[2] + ").");
-      //println("Added velocity: (" +vel.x + ", " + vel.y +").");
-      
-      vel = mutateMove(new PVector (decipheredCmd[0], decipheredCmd[1]));
+
+      if (robotPerception){
+        vel = mutateMove(new PVector (decipheredCmd[0], decipheredCmd[1]));
+        for (int cmdidx = 0; cmdidx < fourDirArray.length; cmdidx++){
+          if (vel.copy().dist(fourDirArray[cmdidx]) == 0){
+            brain.Cmds[time] = fourDirString[cmdidx]; 
+          }
+        }
+      }
       
       pos.add(vel);
       for (int blkidx = 0; blkidx < Blks.length; blkidx++){
@@ -163,10 +165,26 @@ class Robot {
   PVector mutateMove(PVector vel){
     PVector nvel = new PVector();
     
+    PVector[] nextGrid = new PVector[4];
+    float[] nextGridScore = new float[] {1, 1, 1, 1};
     
-    
-    
-    nvel = vel;
+    for (int grididx = 0; grididx < nextGrid.length; grididx++){
+      for (int blkidx = 0; blkidx <4; blkidx++){
+        nextGrid[grididx] = Blks[blkidx].pos.copy().add(fourDirArray[grididx]);
+        int[] gridID = getGridID(nextGrid[grididx]);
+        nextGridScore[grididx] *= (float)(10/(1+pow((float)AstarFitness[gridID[0]][gridID[1]],1)));
+        if (!isValidGrid(gridID)){
+          nextGridScore[grididx] *= Wobs;
+        }
+        if (vel.copy().dist(fourDirArray[grididx]) == 0){
+          nextGridScore[grididx] *= WgeneDir;
+        }
+      }
+    }
+    //println("current grid " +  getGridID(Blks[1].pos)[0] + ","+ getGridID(Blks[1].pos)[1]);
+    //println("==(" + nextGridScore[0] + ","+ nextGridScore[1] + ","+ nextGridScore[2] + ","+ nextGridScore[3] + ")");
+    int selectidx = PortionSelect(nextGridScore);
+    nvel = fourDirArray[selectidx];
     return nvel;
   }
 }

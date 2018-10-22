@@ -47,12 +47,12 @@ class Population {
         if (curRbt.brain.curTime > bestTime){
           curRbt.dead = true;
         } 
-        if (isCollideGrid(Rbts[rbtidx])){
+        if (isCollideRbt(Rbts[rbtidx])){
           curRbt.dead = true;
         } 
-        if (curRbt.Blks[1].pos.x < blkWidth/2.0|| curRbt.Blks[1].pos.y < blkWidth/2.0 || curRbt.Blks[1].pos.x > map.mapSize.x - blkWidth/2.0 || curRbt.Blks[1].pos.y > map.mapSize.y - blkWidth/2.0) { //if near the edges of the window then kill it 
-          curRbt.dead = true;
-        } 
+        //if (curRbt.Blks[1].pos.x < blkWidth/2.0|| curRbt.Blks[1].pos.y < blkWidth/2.0 || curRbt.Blks[1].pos.x > map.mapSize.x - blkWidth/2.0 || curRbt.Blks[1].pos.y > map.mapSize.y - blkWidth/2.0) { //if near the edges of the window then kill it 
+        //  curRbt.dead = true;
+        //} 
       }
       if (!curRbt.dead){   
         if (!curRbt.reachedGoal){
@@ -66,7 +66,7 @@ class Population {
             curRbt.brain.curTime += 1;
           }
         }
-        if (noRepeatingGrids){
+        if (noRepeatingGrids && time < curRbt.brain.pastPos.length){
           curRbt.brain.pastPos[time] = Rbts[rbtidx].pos;
         }
       }

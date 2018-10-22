@@ -1,4 +1,4 @@
-class Block{
+ class Block{
   
   int id;
   PVector pos;
@@ -18,6 +18,7 @@ class Block{
     }
   }
   
+  
   int[] blkGridPos(PVector mapSize){
     int[] gridPos = new int[2];
     gridPos[0] = floor(pos.x/blkWidth);
@@ -36,6 +37,7 @@ class Block{
     }
     return gridPos;
   }
+  
   
   void Move(PVector vel){
     pos.add(vel);
