@@ -1,6 +1,7 @@
 Population test;
 MapDB mapDB;
-Map map;
+Map map; 
+
 
 int mapID = 5;
 int currentWpID = 0;
