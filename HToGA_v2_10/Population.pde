@@ -265,4 +265,22 @@ class Population {
       }
     }
   }
+  
+  void GARemoveTwoDir() {
+    for (int i = 1; i< Rbts.length; i++) {
+      if (random(1) < baseMutRemoveRate){
+        Robot[] parents = tournamentSelect();
+        Robot childRbt = parents[0];
+        int cutPoint = floor(random(bestTime));
+        for (int cmdidx = 0; cmdidx < cutPoint; cmdidx++){
+          //childRbt.brain.Cmds[cmdidx] = parents[0].brain.Cmds[cmdidx];
+          childRbt.brain.Cmds[cmdidx] = Rbts[bestRobot].brain.Cmds[cmdidx];
+        }
+        for (int cmdidx = cutPoint; cmdidx < childRbt.brain.Cmds.length; cmdidx++){
+          childRbt.brain.Cmds[cmdidx] = parents[1].brain.Cmds[cmdidx];
+        }
+        Rbts[i].brain = childRbt.brain.clone();
+      }
+    }
+  }
 }

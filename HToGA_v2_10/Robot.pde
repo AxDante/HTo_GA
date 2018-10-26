@@ -138,8 +138,9 @@ class Robot {
       
       vel = new PVector (decipheredCmd[0], decipheredCmd[1]);
 
-      if (robotPerception){
-        vel = percepMoveAdjust(new PVector (decipheredCmd[0], decipheredCmd[1]),rbtPcepPattern);
+      if (robotPerception && !isBest){
+        
+        vel = mutateMoveDis(new PVector (decipheredCmd[0], decipheredCmd[1]),rbtPcepPattern);
         for (int cmdidx = 0; cmdidx < fourDirArray.length; cmdidx++){
           if (vel.copy().dist(fourDirArray[cmdidx]) == 0){
             brain.Cmds[time] = fourDirString[cmdidx]; 
@@ -189,10 +190,68 @@ class Robot {
     return nvel;
   }
   
+  float fourDirFitness(int[] gridID, int sd){
+    if (sd == 0){
+      return (float)(10/(1+pow((float)AstarFitness[gridID[0]][gridID[1]],1)));
+    }else{
+      int validGrids = 0;
+      int[] nextGrid = new int[2];
+      float[] nextGridScore = new float[] {1, 1, 1, 1};
+      for (int grididx = 0; grididx < nextGridScore.length; grididx++){
+        nextGrid = new int[] {gridID[0] + fourDirGridArray.get(grididx)[0],
+                              gridID[1] + fourDirGridArray.get(grididx)[1]};
+        if (!(nextGrid[0] >= mapW || nextGrid[1] >= mapH || nextGrid[0] < 0 || nextGrid[1] < 0)){
+          validGrids++;
+          nextGridScore[grididx] = fourDirFitness(nextGrid, sd-1);
+          //println(nextGrid[0] + "," + nextGrid[1] + "  " + nextGridScore[grididx]);
+        }else{
+          nextGridScore[grididx] *= Wobs;
+        }
+      }
+
+      return pow(nextGridScore[0]*nextGridScore[1]*nextGridScore[2]*nextGridScore[3],1.0/validGrids);
+    }
+  }
+  
+  
+  PVector mutateMoveDis(PVector vel, int sd){
+    
+    PVector nvel = new PVector();
+    int searchDis = sd;
+    PVector[] nextGrid = new PVector[4];
+    float[] nextGridScore = new float[] {1, 1, 1, 1};
+    
+    for (int grididx = 0; grididx < nextGrid.length; grididx++){
+      for (int blkidx = 0; blkidx < 4; blkidx++){
+        
+        nextGrid[grididx] = Blks[blkidx].pos.copy().add(fourDirArray[grididx]);
+        int[] gridID = getGridID(nextGrid[grididx]);
+        //println("+++++++ INPUT ++++++++");
+        //println("from gridID " + gridID[0]+ ", " + gridID[1]);
+        float outp = fourDirFitness(gridID, 1);
+        nextGridScore[grididx] *= outp;
+        //println("Output " + outp);
+        //println("+++++++++++++++++");
+        if (!isValidGrid(gridID)){
+          nextGridScore[grididx] *= Wobs;
+        }
+      }
+      if (vel.copy().dist(fourDirArray[grididx]) == 0){
+        nextGridScore[grididx] *= WgeneDir;
+      }
+    }
+    //println("current grid " +  getGridID(Blks[1].pos)[0] + ","+ getGridID(Blks[1].pos)[1]);
+    //println("==(" + nextGridScore[0] + ","+ nextGridScore[1] + ","+ nextGridScore[2] + ","+ nextGridScore[3] + ")");
+    int selectidx = PortionSelect(nextGridScore);
+    nvel = fourDirArray[selectidx];
+    return nvel;
+  }
+  
+  
   PVector percepMoveAdjust(PVector vel, int patternID){
     
     PVector nvel = new PVector();
-    ArrayList<PVector[]> SP = new SearchPattern().SP;`
+    ArrayList<PVector[]> SP = new SearchPattern().SP;
     PVector[] nextGrid = new PVector[SP.get(patternID).length];
     float[] nextGridScore = new float[] {1, 1, 1, 1};
     

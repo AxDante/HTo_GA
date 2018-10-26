@@ -21,9 +21,9 @@ boolean noRepeatingGrids = true;
 //Robot Perception Setup
 boolean robotPerception = true;
 int rbtPcepPattern = 1;
-
+int rbtSearchDist = 2;
 float Wobs = 0;
-float WgeneDir = 100;
+float WgeneDir = 200;
 
 //------------------------
 
@@ -33,8 +33,9 @@ float rotAngVel = PI/2.0;  // Rotation angular velocity
 float rotThreshold = PI/22.0; // Rotation threshold angle for the robot to stop 
 
 float baseMutMoveRate = 0.03; //0.05; // Mutation rate of robot moving direction
+float baseMutRemoveRate = 0.005;
 float MutMoveRate;
-float baseMutTransRate = 0.01; //0.005; // Mutation rate of robt transformation
+float baseMutTransRate = 0.00; //0.005; // Mutation rate of robt transformation
 float baseCrossoverRate = 0.0;
 float moveTransRatio = 100.0;
 
@@ -56,7 +57,9 @@ double[][] AstarFitness;
 int[][] gridObsTable;
 PFont dispFont;
 
-PVector[] fourDirArray = new PVector[]{new PVector(0,-blkWidth), new PVector(blkWidth, 0), new PVector(0, blkWidth), new PVector(-blkWidth,0)};
+ArrayList<int[]> fourDirGridArray = new ArrayList<int[]>();
+
+PVector[] fourDirArray = new PVector[]{new PVector(0,-blkWidth), new PVector(blkWidth,  0), new PVector(0, blkWidth), new PVector(-blkWidth,0)};
 PVector[] eightDirArray = new PVector[]{new PVector(0,-blkWidth), new PVector(blkWidth, -blkWidth), new PVector(blkWidth, 0), new PVector(blkWidth, blkWidth), 
                                          new PVector(0, blkWidth), new PVector(-blkWidth, blkWidth), new PVector(-blkWidth,0), new PVector(-blkWidth, -blkWidth)};
 
@@ -64,6 +67,11 @@ String[] fourDirString = new String[]{"F", "R", "B", "L"};
 String[] eightDirString = new String[]{"F", "FR", "R", "BR", "B", "BL", "L", "FL"};
 
 void settings() {
+  
+  fourDirGridArray.add(new int[]{0, -1});
+  fourDirGridArray.add(new int[]{1, 0});
+  fourDirGridArray.add(new int[]{0, 1});
+  fourDirGridArray.add(new int[]{-1, 0});
   
   mapDB = new MapDB();
   map = mapDB.Maps[mapID];
