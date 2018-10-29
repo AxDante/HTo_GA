@@ -63,9 +63,13 @@ class Population {
         if (!curRbt.reachedGoal){
           if (dist(curRbt.Blks[1].pos.x, curRbt.Blks[1].pos.y, map.Wps[currentWpID+1].pos.x, map.Wps[currentWpID+1].pos.y) < 25) {
             curRbt.reachedGoal = true;
-            for (int cmdidx = bestTime+1; cmdidx < curRbt.brain.Cmds.size(); cmdidx++){
-              curRbt.brain.Cmds.set(cmdidx,"S");
+            //for (int cmdidx = bestTime+1; cmdidx < curRbt.brain.Cmds.size(); cmdidx++){
+            //  curRbt.brain.Cmds.set(cmdidx,"S");
+            //}
+            for(int cmdidx = curRbt.brain.Cmds.size()-1; cmdidx > bestTime; cmdidx --){
+              curRbt.brain.Cmds.remove(cmdidx);
             }
+            println( curRbt.brain.Cmds.size());
           }else{
             curRbt.move();
             curRbt.brain.curTime += 1;
@@ -269,6 +273,9 @@ class Population {
   void GARemoveTwoDir() {
     for (int i = 1; i< Rbts.length; i++) {
       if (random(1) < baseMutRemoveRate){
+        
+        
+        
         Robot[] parents = tournamentSelect();
         Robot childRbt = parents[0];
         int cutPoint = floor(random(bestTime));
