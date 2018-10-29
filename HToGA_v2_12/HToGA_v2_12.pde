@@ -11,7 +11,7 @@ int maxTime = 400;
 boolean debugMode = false;
 boolean terminate = false;
 
-boolean mutTransInitialze = false;
+boolean mutTransInitialze = true;
 boolean mutTransProcess = true;
 
 boolean progressingFitness = true;
@@ -36,7 +36,7 @@ float baseMutMoveRate = 0.03; //0.05; // Mutation rate of robot moving direction
 float baseMutRemoveDirRate = 1;
 float baseMutRemoveShapeRate = 0.3;
 float MutMoveRate;
-float baseMutTransRate = 0.00; //0.005; // Mutation rate of robt transformation
+float baseMutTransRate = 0.02; //0.005; // Mutation rate of robt transformation
 float baseCrossoverRate = 0.0;
 float moveTransRatio = 100.0;
 
@@ -143,6 +143,7 @@ void mainLoop(){
       test.GAMutation();
       test.GACrossover();
       test.GARemoveTwoDir();
+      test.GARemoveExtraShapes();
       println("==================================");
       if (test.isConverged()){
         if (currentWpID < map.Wps.length-2){

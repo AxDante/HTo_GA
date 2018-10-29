@@ -237,7 +237,7 @@ class Population {
   //mutate
   void GAMutation() {
     for (int i = 1; i< Rbts.length; i++) {
-      for (int cmdidx = 0; cmdidx < bestTime; cmdidx++) {
+      for (int cmdidx = 0; cmdidx < Rbts[i].brain.Cmds.size(); cmdidx++) {
         float rand = random(1);
         if (rand < baseMutTransRate && mutTransProcess){
           int randMorph = floor(random(7));
@@ -292,12 +292,12 @@ class Population {
             if ((str1 == "F" && str2 == "B")||(str1 == "B" && str2 == "F")||
                 (str1 == "R" && str2 == "L")||(str1 == "L" && str2 == "R")){
                 if(idx1 > idx2){
-                  Cmds.remove(idx1);
-                  Cmds.remove(idx2);
+                  Rbts[i].brain.Cmds.remove(idx1);
+                  Rbts[i].brain.Cmds.remove(idx2);
                   validSelect = true;
                 }else{
-                  Cmds.remove(idx2);
-                  Cmds.remove(idx1);
+                  Rbts[i].brain.Cmds.remove(idx2);
+                  Rbts[i].brain.Cmds.remove(idx1);
                   validSelect = true;
                 }
             }
@@ -320,7 +320,8 @@ class Population {
           int idx = floor(random(cmdSize));
           int inMorph = int(Cmds.get(idx));
           if (inMorph != 0){
-            Cmds.remove(idx);
+            Rbts[i].brain.Cmds.remove(idx);
+            validSelect = true;
           }
         }
       }
