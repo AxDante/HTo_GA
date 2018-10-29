@@ -26,7 +26,6 @@ public class Grid {
             boolean opener = false;
             for (int b = 0; b < open.size(); b++) {
               if (grids[i][j] == open.get(b)) {
-                //println("ok");
                 opener = true;
               }
             }

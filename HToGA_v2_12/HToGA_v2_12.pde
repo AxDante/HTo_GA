@@ -3,10 +3,10 @@ MapDB mapDB;
 Map map; 
 
 
-int mapID = 5;
+int mapID = 6;
 int currentWpID = 0;
 int time = 0;
-int maxTime = 400;
+int maxTime = 100;
 
 boolean debugMode = false;
 boolean terminate = false;
@@ -26,14 +26,14 @@ float Wobs = 0;
 float WgeneDir = 300;
 
 //------------------------
-
+boolean forceRemove = true;
 //-------------------------
 
 float rotAngVel = PI/2.0;  // Rotation angular velocity
 float rotThreshold = PI/22.0; // Rotation threshold angle for the robot to stop 
 
 float baseMutMoveRate = 0.03; //0.05; // Mutation rate of robot moving direction
-float baseMutRemoveDirRate = 1;
+float baseMutRemoveDirRate = 0.002;
 float baseMutRemoveShapeRate = 0.3;
 float MutMoveRate;
 float baseMutTransRate = 0.02; //0.005; // Mutation rate of robt transformation
@@ -144,6 +144,7 @@ void mainLoop(){
       test.GACrossover();
       test.GARemoveTwoDir();
       test.GARemoveExtraShapes();
+      test.clearReachHistory();
       println("==================================");
       if (test.isConverged()){
         if (currentWpID < map.Wps.length-2){

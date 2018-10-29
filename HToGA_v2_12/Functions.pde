@@ -115,7 +115,6 @@ int PortionSelect(float[] arr){
     if (runningSum > rand) {
       //println("OUT(" + arridx + ")");
       return arridx;
-      
     }
   }
   return -1;

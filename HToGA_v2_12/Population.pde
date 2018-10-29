@@ -72,7 +72,7 @@ class Population {
             for(int cmdidx = curRbt.brain.Cmds.size()-1; cmdidx > bestTime; cmdidx --){
               curRbt.brain.Cmds.remove(cmdidx);
             }
-            println( curRbt.brain.Cmds.size());
+            //println( curRbt.brain.Cmds.size());
           }else{
             curRbt.move();
             curRbt.brain.curTime += 1;
@@ -179,7 +179,7 @@ class Population {
         print (cmds.get(cmdidx) + " ");
         if (cmds.get(cmdidx) == "S"){
           reached = true;
-        }
+          }
         if ((cmdidx+1)%50 == 0){
           print("\n");
         }
@@ -272,59 +272,72 @@ class Population {
       }
     }
   }
-  
   void GARemoveTwoDir() {
     for (int i = 1; i< Rbts.length; i++) {
-      if (random(1) < baseMutRemoveDirRate){
-        ArrayList<String> Cmds = Rbts[i].brain.Cmds;
-        int cmdSize = Cmds.size();
-        boolean validSelect = false;
-        int searchCount = 0;
-        while (!validSelect && searchCount < 1000){
-          searchCount++;
-          int idx1 = floor(random(cmdSize));
-          int idx2 = floor(random(cmdSize));
-          
-          String str1 = Cmds.get(idx1);
-          String str2 = Cmds.get(idx2);
-          
-          if (idx1 != idx2){
-            if ((str1 == "F" && str2 == "B")||(str1 == "B" && str2 == "F")||
-                (str1 == "R" && str2 == "L")||(str1 == "L" && str2 == "R")){
-                if(idx1 > idx2){
-                  Rbts[i].brain.Cmds.remove(idx1);
-                  Rbts[i].brain.Cmds.remove(idx2);
-                  validSelect = true;
-                }else{
-                  Rbts[i].brain.Cmds.remove(idx2);
-                  Rbts[i].brain.Cmds.remove(idx1);
-                  validSelect = true;
-                }
+      int cmdSize = Rbts[i].brain.Cmds.size();
+      int maxToRemove = floor(baseMutRemoveDirRate*cmdSize);
+      int numToRemove = floor(random(maxToRemove));
+      int count = 0;
+      while(numToRemove!= 0 && count < 200){
+        cmdSize = Rbts[i].brain.Cmds.size();
+        count++;
+        int idx1 = floor(random(cmdSize));
+        int idx2 = floor(random(cmdSize));
+        String str1 = Rbts[i].brain.Cmds.get(idx1);
+        String str2 = Rbts[i].brain.Cmds.get(idx2);
+        if (idx1 != idx2){
+          if ((str1 == "F" && str2 == "B")||(str1 == "B" && str2 == "F")||(str1 == "R" && str2 == "L")||(str1 == "L" && str2 == "R")){
+            if(idx1 > idx2){
+              Rbts[i].brain.Cmds.remove(idx1);
+              Rbts[i].brain.Cmds.remove(idx2);
+              numToRemove--;
+            }else{
+              Rbts[i].brain.Cmds.remove(idx2);
+              Rbts[i].brain.Cmds.remove(idx1);
+              numToRemove--;
             }
+          }
+        }
+      }
+    }
+    if (forceRemove){
+      boolean noAdjust = false;
+      while (!noAdjust){
+        noAdjust = true;
+        int cmdSize = Rbts[0].brain.Cmds.size();
+        for (int cmdidx = cmdSize-1; cmdidx >= 1; cmdidx--){
+          String str1 = Rbts[0].brain.Cmds.get(cmdidx);
+          String str2 = Rbts[0].brain.Cmds.get(cmdidx-1);
+          if ((str1 == "F" && str2 == "B")||(str1 == "B" && str2 == "F")||(str1 == "R" && str2 == "L")||(str1 == "L" && str2 == "R")){
+            Rbts[0].brain.Cmds.remove(cmdidx);
+            Rbts[0].brain.Cmds.remove(cmdidx-1);
+            noAdjust = false;
+            break;
           }
         }
       }
     }
   }
   
-  
   void GARemoveExtraShapes() {
     for (int i = 1; i< Rbts.length; i++) {
-      if (random(1) < baseMutRemoveShapeRate){
-        ArrayList<String> Cmds = Rbts[i].brain.Cmds;
-        int cmdSize = Cmds.size();
-        boolean validSelect = false;
-        int searchCount = 0;
-        while (!validSelect && searchCount < 1000){
-          searchCount++;
-          int idx = floor(random(cmdSize));
-          int inMorph = int(Cmds.get(idx));
-          if (inMorph != 0){
-            Rbts[i].brain.Cmds.remove(idx);
-            validSelect = true;
-          }
-        }
+      ArrayList<String> Cmds = Rbts[i].brain.Cmds;
+      int cmdSize = Cmds.size();
+      for (int cmdidx = cmdSize-1; cmdidx >= 0; cmdidx--){
+         int inMorph = int(Cmds.get(cmdidx));
+
+         if (inMorph != 0){
+           if (random(1) < baseMutRemoveShapeRate && Rbts[i].fitness > 10){
+             Rbts[i].brain.Cmds.remove(cmdidx);
+           } 
+         }
       }
+    }
+  }
+  
+  void clearReachHistory(){
+    for (int i = 1; i< Rbts.length; i++) {
+      Rbts[i].reachedGoal = false; 
     }
   }
 }

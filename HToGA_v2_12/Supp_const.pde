@@ -10,7 +10,7 @@ class MapDB{
   
   MapDB(){
     
-    Maps = new Map[6];
+    Maps = new Map[7];
     
     // ---------map 01----------
     mapSize = new PVector(800, 800);
@@ -106,6 +106,27 @@ class MapDB{
     Obss[1] = new Obstacle(new PVector(20*blkWidth, 10*blkWidth), new PVector(2*blkWidth, 30*blkWidth));
     
     Maps[5] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    
+    
+        
+    // ---------map 07----------
+    mapSize = new PVector(800,800);
+    
+    gridBasedMode = true;
+     
+    Wps = new Waypoint[2];
+    Wps[0] = new Waypoint(new PVector(7*blkWidth, 15*blkWidth), 0); 
+    Wps[1] = new Waypoint(new PVector(26*blkWidth, 15*blkWidth), 0);
+    
+    Obss = new Obstacle[4];
+    Obss[0] = new Obstacle(new PVector(0*blkWidth, 0*blkWidth), new PVector(32*blkWidth, 10*blkWidth));
+    Obss[1] = new Obstacle(new PVector(0*blkWidth, 20*blkWidth), new PVector(32*blkWidth, 12*blkWidth));
+    Obss[2] = new Obstacle(new PVector(16*blkWidth, 10*blkWidth), new PVector(2*blkWidth, 5*blkWidth));
+    Obss[3] = new Obstacle(new PVector(16*blkWidth, 16*blkWidth), new PVector(2*blkWidth, 4*blkWidth));
+    
+    Maps[6] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    
+    
   }
 }
 

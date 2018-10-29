@@ -13,7 +13,7 @@ class Robot {
   float fitness = 0;
 
   Block[] Blks;
-  int morph = 1;
+  int morph = 3;
   Morphology Morph;
   
   Robot() {
@@ -36,32 +36,44 @@ class Robot {
     Blks[3] = new Block(3, blkWidth , pos.copy().add(new PVector(-blkWidth*2,0)), 0);
     
     updateBlockDesHeading();
+    initializeBlockDesHeading();
   }
   
   //-----------------------------------------------------------------------------------------------------------------
   //Update desired heading to each robot blocks
   void updateBlockDesHeading(){
     
-    //println("2t-" + time);
-   
-      int newMorph = int(brain.Cmds.get(time));
-      
-      //Moving -> No changes in morphology
-      if (newMorph == 0){ 
-        return;
-      //Changes in morphology
-      }else if (newMorph != morph){
-        morph = newMorph;
-      }
-      //Perform shapeshifting
-      int modMorph = morph % 7;
-      int divMorph = floor((morph-1)/7);
-      for(int blkidx = 0; blkidx < 4; blkidx++){
-        float newHeading = Morph.RelAng[modMorph-1][blkidx] - divMorph * PI/2;
-        // Set desired heading of each block according to the array values
-        Blks[blkidx].desHeading = newHeading;
-      }
+    
+    int newMorph = int(brain.Cmds.get(time));
+    
+    //Moving -> No changes in morphology
+    if (newMorph == 0){ 
+      return;
+    //Changes in morphology
+    }else if (newMorph != morph){
+      morph = newMorph;
+    }
+    //Perform shapeshifting
+    int modMorph = morph % 7;
+    int divMorph = floor((morph-1)/7);
+    for(int blkidx = 0; blkidx < 4; blkidx++){
+      float newHeading = Morph.RelAng[modMorph-1][blkidx] - divMorph * PI/2;
+      // Set desired heading of each block according to the array values
+      Blks[blkidx].desHeading = newHeading;
+    }
   }
+
+  void initializeBlockDesHeading(){
+    
+    int modMorph = morph % 7;
+    int divMorph = floor((morph-1)/7);
+    for(int blkidx = 0; blkidx < 4; blkidx++){
+      float newHeading = Morph.RelAng[modMorph-1][blkidx] - divMorph * PI/2;
+      // Set desired heading of each block according to the array values
+      Blks[blkidx].desHeading = newHeading;
+    }
+  }
+
 
   //-----------------------------------------------------------------------------------------------------------------
   // perform robot shape-shifting
@@ -159,6 +171,7 @@ class Robot {
   //clone it 
   Robot gimmeBaby() {
     Robot baby = new Robot();
+    //baby.reachedGoal = reachedGoal;
     baby.brain = brain.clone();//babies have the same brain as their parents
     baby.fitness = fitness;
     return baby;
