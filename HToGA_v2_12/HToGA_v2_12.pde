@@ -2,7 +2,6 @@ Population test;
 MapDB mapDB;
 Map map; 
 
-
 int mapID = 6;
 int currentWpID = 0;
 int time = 0;
@@ -63,9 +62,10 @@ ArrayList<int[]> fourDirGridArray = new ArrayList<int[]>();
 PVector[] fourDirArray = new PVector[]{new PVector(0,-blkWidth), new PVector(blkWidth,  0), new PVector(0, blkWidth), new PVector(-blkWidth,0)};
 PVector[] eightDirArray = new PVector[]{new PVector(0,-blkWidth), new PVector(blkWidth, -blkWidth), new PVector(blkWidth, 0), new PVector(blkWidth, blkWidth), 
                                          new PVector(0, blkWidth), new PVector(-blkWidth, blkWidth), new PVector(-blkWidth,0), new PVector(-blkWidth, -blkWidth)};
-
 String[] fourDirString = new String[]{"F", "R", "B", "L"};
 String[] eightDirString = new String[]{"F", "FR", "R", "BR", "B", "BL", "L", "FL"};
+
+Table popTable;
 
 void settings() {
   
@@ -82,6 +82,13 @@ void settings() {
 }
 
 void setup(){
+  
+  popTable = new Table();
+  popTable.addColumn("genID");
+  popTable.addColumn("bestTime");
+  popTable.addColumn("reachedGoal");
+  popTable.addColumn("bestFitness");
+  popTable.addColumn("bestGene");
   
   dispFont = createFont("Arial",8,true); 
   test = new Population(totPopulation, maxTime , map.Obss);
@@ -137,7 +144,6 @@ void mainLoop(){
   if (!terminate){
     if (test.allRobotsDead()) {
       time = 0;
-      println("Navigation " + test.gen + " result:" );
       test.calculateFitness();
       test.naturalSelection();
       test.GAMutation();
@@ -145,7 +151,10 @@ void mainLoop(){
       test.GARemoveTwoDir();
       test.GARemoveExtraShapes();
       test.clearReachHistory();
+      
+      println("Navigation " + test.gen + " result:" );
       println("==================================");
+      
       if (test.isConverged()){
         if (currentWpID < map.Wps.length-2){
           println("GA converged! Now navigating from wp " + currentWpID + " to wp " + currentWpID+1);
@@ -153,6 +162,7 @@ void mainLoop(){
           test = new Population(totPopulation, maxTime, map.Obss);
         }else{
           println("GA converged! Waypoint navigation process terminates.");
+          saveTable(popTable, "data/GAresult.csv");
           terminate = true;
         }
       }

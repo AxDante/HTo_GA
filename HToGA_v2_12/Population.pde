@@ -1,4 +1,4 @@
-class Population {
+  class Population {
   
   Robot[] prevGoodRbts;
   Robot[] Rbts;
@@ -126,7 +126,7 @@ class Population {
   }
   
   boolean isConverged() {
-    int minConvergeSample = 10;
+    int minConvergeSample = 20;
     int maxConvergeDiff = 0;
     if (gen-1 > minConvergeSample) {
       int genDiff = (StepData[gen-1-minConvergeSample] - StepData[gen-1]);
@@ -136,21 +136,6 @@ class Population {
       }
     }
     return false;
-  }
-
-  //-------------------------------------------------------------------------------------------------------------------------------------
-
-  void findBestFitness(){
-    float max = 0;
-    int maxIndex = 0;
-
-    for (int i = 0; i< Rbts.length; i++) {
-      if (Rbts[i].fitness > max) {
-        max = Rbts[i].fitness;
-        maxIndex = i;
-      }
-    }
-    bestRobot = maxIndex;
   }
 
   void naturalSelection() {
@@ -166,16 +151,26 @@ class Population {
       }
     }
     bestRobot = maxIndex;
-
+    println("BestRobot  " + bestRobot  + "  rg: " + Rbts[bestRobot].reachedGoal + " fns: " + Rbts[bestRobot].fitness );
+    
+    TableRow newRow = popTable.addRow();
+    newRow.setInt("genID", gen);
+    newRow.setInt("bestTime", bestTime);
+    newRow.setFloat("bestFitness", Rbts[bestRobot].fitness);
+    
     if (Rbts[bestRobot].reachedGoal) {
       bestTime = Rbts[bestRobot].brain.curTime;
       StepData[gen] = bestTime;
+      
       println("bestTime:", bestTime);
       println("Best Sequence:");
       boolean reached = false;
       ArrayList<String> cmds = Rbts[bestRobot].brain.Cmds;
+      
       int cmdidx = 0;
+      String seqStr = "";
       while(!reached && cmdidx < cmds.size()){
+        seqStr = seqStr + cmds.get(cmdidx);
         print (cmds.get(cmdidx) + " ");
         if (cmds.get(cmdidx) == "S"){
           reached = true;
@@ -186,9 +181,19 @@ class Population {
         cmdidx++;
       }
       println();
+      
+      newRow.setString("reachGoal", "Y");
+      newRow.setString("bestGene", seqStr);
+      
     }else{
+      
       StepData[gen] = -1;
+      newRow.setString("reachGoal", "F");
+      newRow.setString("bestGene", "n/a");
+      
     }
+   
+   
    
     fitnessSum = 0;
     for (int i = 0; i< Rbts.length; i++) {
@@ -202,7 +207,7 @@ class Population {
       newRbts[i] = parent.gimmeBaby();
     }
     Rbts = newRbts.clone();
-    gen ++;
+    gen++;
   }
 
   //-------------------------------------------------------------------------------------------------------------------------------------
