@@ -13,7 +13,7 @@ class Robot {
   float fitness = 0;
 
   Block[] Blks;
-  int morph = 3;
+  int morph = 2;
   Morphology Morph;
   
   Robot() {
@@ -54,8 +54,8 @@ class Robot {
       morph = newMorph;
     }
     //Perform shapeshifting
-    int modMorph = morph % 7;
-    int divMorph = floor((morph-1)/7);
+    int modMorph = morph % morphNum;
+    int divMorph = floor((morph-1)/morphNum);
     for(int blkidx = 0; blkidx < 4; blkidx++){
       float newHeading = Morph.RelAng[modMorph-1][blkidx] - divMorph * PI/2;
       // Set desired heading of each block according to the array values
@@ -65,8 +65,8 @@ class Robot {
 
   void initializeBlockDesHeading(){
     
-    int modMorph = morph % 7;
-    int divMorph = floor((morph-1)/7);
+    int modMorph = morph % morphNum;
+    int divMorph = floor((morph-1)/morphNum);
     for(int blkidx = 0; blkidx < 4; blkidx++){
       float newHeading = Morph.RelAng[modMorph-1][blkidx] - divMorph * PI/2;
       // Set desired heading of each block according to the array values
@@ -85,10 +85,6 @@ class Robot {
         Rotate(0,rotateAng, Blks[1].getCorner(3));
         shapeShifting = true;
       }
-      if (abs(Blks[1].heading - Blks[1].desHeading) > rotThreshold){
-       // Blks[1].Rotate(Blks[1].desHeading-Blks[1].heading, Blks[1].getCorner(3));
-         shapeShifting = true;
-      }
       if (abs(Blks[2].heading - Blks[2].desHeading) > rotThreshold){
         // Block 2 rotates with respect to upper-right corner of block 1
         float rotateAng = Blks[2].desHeading - Blks[2].heading;
@@ -101,6 +97,11 @@ class Robot {
         Rotate(3,rotateAng, Blks[2].getCorner(1));
         shapeShifting = true;
       }
+      if (abs(Blks[1].heading - Blks[1].desHeading) > rotThreshold){
+        float rotateAng = Blks[1].desHeading - Blks[1].heading;
+        RotateCenter(rotateAng);
+        shapeShifting = true;
+      }
     } else{
       shapeShifting = false;
       if (abs(Blks[0].heading - Blks[0].desHeading) > rotThreshold){
@@ -110,8 +111,9 @@ class Robot {
         shapeShifting = true;
       }
       else if (abs(Blks[1].heading - Blks[1].desHeading) > rotThreshold){
-       // Blks[1].Rotate(Blks[1].desHeading-Blks[1].heading, Blks[1].getCorner(3));
-         shapeShifting = true;
+       float rotateAng = (Blks[1].desHeading > Blks[1].heading)? rotAngVel : -rotAngVel;
+       RotateCenter(rotateAng);
+       shapeShifting = true;
       }
       else if (abs(Blks[2].heading - Blks[2].desHeading) > rotThreshold){
         // Block 2 rotates with respect to upper-right corner of block 1
@@ -135,7 +137,7 @@ class Robot {
     Blks[blkId].pos.add(posShift);
     
     if (blkId == 2){
-      Rotate(3, angle, posCtr);
+      Rotate(3, angle, posCtr); // If block 2 rotates, rotate block 3 as well
     }
     if(debugMode){
       println("Block " + blkId + " Rotation:");
@@ -145,14 +147,34 @@ class Robot {
       println("posToCenter (x,y).rotate(angle).sub(posToCenter) = (" + posToCenter.rotate(angle).sub(posToCenter).x + ", " + posToCenter.rotate(angle).sub(posToCenter).y +").");
     }
   }
+  
+  void RotateCenter(float angle){
+    
+    PVector posCtr = Blks[1].pos.copy();
+    Blks[1].heading = Blks[1].heading + angle;
+
+    Rotate(0, angle, posCtr); 
+    Rotate(2, angle, posCtr);
+  }
 
   //-----------------------------------------------------------------------------------------------------------------
   //draws the dot on the screen
   void show() {
     if (isBest) {
-      for (int blkidx = 0; blkidx < Blks.length; blkidx++){
+      if (colorfulRobot){
         fill(0, 255, 0);
-        rect(Blks[blkidx].pos.x, Blks[blkidx].pos.y, Blks[blkidx].blkWidth, Blks[blkidx].blkWidth);
+        rect(Blks[1].pos.x, Blks[1].pos.y, Blks[1].blkWidth, Blks[1].blkWidth);
+        fill(0, 205, 100);
+        rect(Blks[0].pos.x, Blks[0].pos.y, Blks[0].blkWidth, Blks[0].blkWidth);
+        fill(100, 205, 0);
+        rect(Blks[2].pos.x, Blks[2].pos.y, Blks[2].blkWidth, Blks[2].blkWidth);
+        fill(150, 155, 0);
+        rect(Blks[3].pos.x, Blks[3].pos.y, Blks[3].blkWidth, Blks[3].blkWidth);
+      }else{
+        for (int blkidx = 0; blkidx < Blks.length; blkidx++){
+          fill(0, 255, 0);
+          rect(Blks[blkidx].pos.x, Blks[blkidx].pos.y, Blks[blkidx].blkWidth, Blks[blkidx].blkWidth);
+        }
       }
     } else {
       fill(0);
@@ -187,6 +209,13 @@ class Robot {
       pos.add(vel);
       for (int blkidx = 0; blkidx < Blks.length; blkidx++){
         Blks[blkidx].pos.add(vel);
+      }
+    }else{
+      if(debugMode){
+        print( "0: (" + Blks[0].pos.x + "," + Blks[0].pos.y + ") " + Blks[0].heading);
+        print( "  1: (" + Blks[1].pos.x + "," + Blks[1].pos.y + ") " + Blks[1].heading);
+        print( "  2: (" + Blks[2].pos.x + "," + Blks[2].pos.y + ") " + Blks[2].heading);
+        println( "  3: (" + Blks[3].pos.x + "," + Blks[3].pos.y + ") " + Blks[3].heading);
       }
     }
   }

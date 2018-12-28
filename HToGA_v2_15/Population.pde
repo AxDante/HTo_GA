@@ -58,10 +58,6 @@
         //} 
       }
       
-      //println("t-" + time);
-      //println("curt-" + curRbt.brain.curTime);
-      //println("best-" + bestTime);
-      //println("-" + maxTime);
       if (!curRbt.dead){   
         if (!curRbt.reachedGoal){
           if (dist(curRbt.Blks[1].pos.x, curRbt.Blks[1].pos.y, map.Wps[currentWpID+1].pos.x, map.Wps[currentWpID+1].pos.y) < 25) {
@@ -196,7 +192,6 @@
       newRow.setString("bestGene", "n/a");
     }
    
-   
     fitnessSum = 0;
     for (int i = 0; i< Rbts.length; i++) {
       fitnessSum += Rbts[i].fitness;
@@ -251,7 +246,9 @@
       for (int cmdidx = 0; cmdidx < Rbts[i].brain.Cmds.size(); cmdidx++) {
         float rand = random(1);
         if (rand < baseMutTransRate && mutTransProcess){
-          int randMorph = floor(random(7));
+          //int randMorph = floor(random(morphNum));
+          int randMorph = floor(random(2));
+          if (randMorph == 1) randMorph = 8;
           Rbts[i].morph = randMorph;
           Rbts[i].brain.Cmds.set(cmdidx,str(randMorph));
         }else if (rand < MutMoveRate) {

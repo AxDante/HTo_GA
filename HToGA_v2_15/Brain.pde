@@ -18,9 +18,10 @@ class Brain {
   void randomizeCmds() {
     for (int idxcmd = 0; idxcmd < Cmds.size(); idxcmd++) {
       float randomNum = random(1);
+      
       if (randomNum < 1/moveTransRatio && mutTransInitialze){
-        int randMorph = floor(random(7));
-        //Cmds[idxcmd] = new Command(new PVector(0, 0), randMorph);
+        int randMorph = floor(random(morphNum));
+        Cmds.set(idxcmd,str(randMorph));
       } else {
         int randInt = (int)random(4);
         String randDirStr = fourDirString[randInt];
@@ -30,10 +31,10 @@ class Brain {
           boolean validDir = false;
           while (!validDir){ 
             validDir = true;
-            if (idxcmd < 7){
+            if (idxcmd < rptGridTraceMax){
               validDir = true;
             }else{
-              for (int grididx = 1; grididx <= 7; grididx += 2){
+              for (int grididx = 1; grididx <= rptGridTraceMax; grididx += 2){
                 if (sumDir.x == 0 && sumDir.y == 0){
                   validDir = false;
                   randInt = (int)random(4);
