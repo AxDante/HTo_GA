@@ -2,7 +2,7 @@ Population test;
 MapDB mapDB;
 Map map; 
 
-int mapID = 7;
+int mapID = 8;
 int maxTime = 100;
 
 

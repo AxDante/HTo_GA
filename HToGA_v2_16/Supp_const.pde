@@ -10,7 +10,7 @@ class MapDB{
   
   MapDB(){
     
-    Maps = new Map[8];
+    Maps = new Map[9];
     
     // ---------map 01----------
     mapSize = new PVector(800, 800);
@@ -109,7 +109,7 @@ class MapDB{
     
     
         
-    // ---------map 07----------
+    // ---------map 07---------- (horizontal-I single slit)
     mapSize = new PVector(800,800);
     
     gridBasedMode = true;
@@ -127,7 +127,7 @@ class MapDB{
     Maps[6] = new Map(mapSize, gridBasedMode, Wps, Obss);
     
    
-    // ---------map 08----------
+    // ---------map 08---------- (vertical-I single slit)
     mapSize = new PVector(800,800);
     
     gridBasedMode = true;
@@ -143,6 +143,37 @@ class MapDB{
     Obss[3] = new Obstacle(new PVector(16*blkWidth, 16*blkWidth), new PVector(4*blkWidth, 2*blkWidth));
     
     Maps[7] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    
+    
+    // ---------map 09---------- (larger map, 3 slits, vertical-I and horizontal-I test)
+    mapSize = new PVector(1000,1000);
+    
+    gridBasedMode = true;
+     
+    Wps = new Waypoint[4];
+    Wps[0] = new Waypoint(new PVector(10*blkWidth, 9*blkWidth), 0); 
+    Wps[1] = new Waypoint(new PVector(10*blkWidth, 30*blkWidth), 0);
+    Wps[2] = new Waypoint(new PVector(29*blkWidth, 30*blkWidth), 0);
+    Wps[3] = new Waypoint(new PVector(29*blkWidth, 9*blkWidth), 0);
+    
+    Obss = new Obstacle[9];
+    Obss[0] = new Obstacle(new PVector(0*blkWidth, 0*blkWidth), new PVector(4*blkWidth, 40*blkWidth));
+    Obss[1] = new Obstacle(new PVector(18*blkWidth, 0*blkWidth), new PVector(4*blkWidth, 30*blkWidth));
+    Obss[2] = new Obstacle(new PVector(36*blkWidth, 0*blkWidth), new PVector(4*blkWidth, 40*blkWidth));
+    Obss[3] = new Obstacle(new PVector(0*blkWidth, 0*blkWidth), new PVector(40*blkWidth, 4*blkWidth));
+    Obss[4] = new Obstacle(new PVector(0*blkWidth, 36*blkWidth), new PVector(40*blkWidth, 4*blkWidth));
+    
+    Obss[5] = new Obstacle(new PVector(18*blkWidth, 31*blkWidth), new PVector(4*blkWidth, 10*blkWidth));
+    Obss[6] = new Obstacle(new PVector(0*blkWidth, 18*blkWidth), new PVector(10*blkWidth, 4*blkWidth));
+    Obss[7] = new Obstacle(new PVector(11*blkWidth, 18*blkWidth), new PVector(18*blkWidth, 4*blkWidth));
+    Obss[8] = new Obstacle(new PVector(30*blkWidth, 18*blkWidth), new PVector(10*blkWidth, 4*blkWidth));
+    
+    //Obss[1] = new Obstacle(new PVector(20*blkWidth, 0*blkWidth), new PVector(12*blkWidth, 32*blkWidth));
+    //Obss[2] = new Obstacle(new PVector(10*blkWidth, 16*blkWidth), new PVector(5*blkWidth, 2*blkWidth));
+    //Obss[3] = new Obstacle(new PVector(16*blkWidth, 16*blkWidth), new PVector(4*blkWidth, 2*blkWidth));
+    
+    Maps[8] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    
   }
 }
 
