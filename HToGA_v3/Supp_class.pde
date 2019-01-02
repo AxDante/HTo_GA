@@ -1,3 +1,5 @@
+
+
 class Waypoint{
   PVector pos;
   int morph;
@@ -27,13 +29,16 @@ class Map{
   boolean gridBasedMode;
   Waypoint[] Wps;
   Obstacle[] Obss;
+  DynamicObstacle[] DyObss;
+  
   PVector mapSize;
   
-  Map(PVector mapSize_, boolean gridBasedMode_, Waypoint[] Wps_, Obstacle[] Obss_){
+  Map(PVector mapSize_, boolean gridBasedMode_, Waypoint[] Wps_, Obstacle[] Obss_, DynamicObstacle[] DyObss_){
     mapSize = mapSize_;
     gridBasedMode = gridBasedMode_;
     Wps = Wps_;
     Obss = Obss_;
+    DyObss = DyObss_;
   }
 }
 
@@ -60,5 +65,40 @@ class Obstacle{
     retCorner[3] = pos.copy().add(new PVector(-size.x / sin(cornerAng) / 2.0, 0).rotate(-PI + cornerAng));
     return retCorner[cornerId];
   }
+}
+
+class DynamicObstacle{
   
+  PVector startPos;
+  PVector pos;
+  PVector size;
+  float cornerAng;
+  int dirX;
+  int dirY;
+  int speed;
+  int patrolTime;
+  
+  DynamicObstacle(PVector startPos_, PVector size_, int dirX_, int dirY_, int speed_, int patrolTime_){
+    startPos = startPos_;
+    size = size_;
+    cornerAng = atan((float)size.x/size.y);
+    dirX = dirX_;
+    dirY = dirY_;
+    speed = speed_;
+    patrolTime = patrolTime_;
+    pos = startPos.copy();
+  }
+  
+  PVector getCorner(int cornerId){
+    PVector[] retCorner = new PVector[4];
+    // Upper-right corner
+    retCorner[0] = pos.copy().add(new PVector(-size.x / sin(cornerAng) / 2.0, 0).rotate(-cornerAng));
+    // Upper-left corner
+    retCorner[1] = pos.copy().add(new PVector(-size.x / sin(cornerAng) / 2.0, 0).rotate(cornerAng));
+    // Bottom-left corner
+    retCorner[2] = pos.copy().add(new PVector(-size.x / sin(cornerAng) / 2.0, 0).rotate(PI - cornerAng));
+    // Bottom-right corner
+    retCorner[3] = pos.copy().add(new PVector(-size.x / sin(cornerAng) / 2.0, 0).rotate(-PI + cornerAng));
+    return retCorner[cornerId];
+  }
 }

@@ -2,7 +2,7 @@ Population test;
 MapDB mapDB;
 Map map; 
 
-int mapID = 9;
+int mapID = 10;
 int maxTime = 100;
 
 // Begin of Adjustable Booleans 
@@ -71,8 +71,13 @@ int[] goalGrid;                       // Goal grid for GA
 ArrayList<Grid> open = new ArrayList<Grid>();      // Open array for A star search
 ArrayList<Grid> closed = new ArrayList<Grid>();    // Closed array for A star search
 double[][] AstarFitness;              // A star fitness matrix for the map
-
+ArrayList<double[][]> AstarFitnessList; // Stores several fitness matrices for the map
 int[][] gridObs;                      // Grid obstacle matrix
+ArrayList<int[][]> gridObsList;       // Stores several grid obstacle matrices for the map
+//int dyTime;                           // dynamic time for Astar fitness table loading
+int dyTimeMax = 10;                        // Maximum dynamic time
+
+                      
 PFont dispFont;                       // Grid Font display 
  
 ArrayList<int[]> fourDirGridArray = new ArrayList<int[]>();  // Grid movement array for four directions : (0,1), (0, -1), (1,0), (-1,0)
@@ -106,7 +111,18 @@ void settings() {
 }
 
 void setup(){
-  
+  /*
+  ArrayList<double[][]> kkk = new ArrayList<double[][]>();
+  double[][] ss = new double[1][2];
+  ss[0][0] = 10;
+  ss[0][1] = 100;
+  kkk.add(ss);
+  double[][] ss2 = new double[1][2];
+  ss2[0][0] = 20;
+  ss2[0][1] = 200;
+  kkk.add(ss2);
+  */
+ 
   // Preperation of data logging
   popTable = new Table();
   popTable.addColumn("genID");
@@ -135,9 +151,7 @@ void setup(){
     astarTable.addColumn(str(sampy));
     gridObsTable.addColumn(str(sampy));
   }
-  updateObstacleTable();
-  //updateFitnessTable(map.Wps.length-1);
-  updateFitnessTable(1);
+  updateFitnessList(1);
   saveTable(gridObsTable, "data/gridObsTable.csv");
   saveTable(astarTable, "data/astarTable.csv");
   
@@ -170,6 +184,10 @@ void draw() {
   for (int intobs = 0; intobs < map.Obss.length; intobs++){
     rect(map.Obss[intobs].pos.x, map.Obss[intobs].pos.y, map.Obss[intobs].size.x, map.Obss[intobs].size.y);
   }
+  for (int intDyobs = 0; intDyobs < map.DyObss.length; intDyobs++){
+    rect(map.DyObss[intDyobs].pos.x, map.DyObss[intDyobs].pos.y, map.DyObss[intDyobs].size.x, map.DyObss[intDyobs].size.y);
+  }
+ 
  
   // Draw grids
   stroke(125);
@@ -211,7 +229,7 @@ void mainLoop(){
           if (currentWpID < map.Wps.length-2){
             currentWpID += 1;
             println("GA converged! Now navigating from wp " + currentWpID + " to wp " + str(currentWpID+1)); 
-            updateFitnessTable(currentWpID+1);  
+            updateFitnessList(currentWpID+1);  
             test = new Population(totPopulation, maxTime, map.Obss);
           }else{
             println("GA converged! Waypoint navigation process terminates.");
@@ -230,6 +248,7 @@ void mainLoop(){
       test.show();
       time++;
       MutMoveRate = baseMutMoveRate;
+      updateDynamicObstaclePos();
     }
   }
 }

@@ -1,73 +1,105 @@
-
-void updateFitnessTable(int WpSeq){
-  boolean isDistFound;
-  AstarFitness = new double[mapW][mapH];
-  for (int sampx = 0; sampx < mapW; sampx++){
+void updateDynamicObstaclePos(){
+  // update dynamic obstacle position
+  for (int intDyObs = 0; intDyObs < map.DyObss.length; intDyObs++){
     
-    TableRow newRow = astarTable.addRow();
-    for (int sampy = 0; sampy < mapH; sampy++){
-      
-      open = new ArrayList<Grid>();
-      closed = new ArrayList<Grid>();
-       
-      startGrid = new int[] {sampx, sampy};
-      goalGrid = map.Wps[WpSeq].wpToGrid(map.mapSize);
-      
-      grids = new Grid[mapW][mapH];
-      for (int i = 0; i < grids.length; i++) {
-        for (int j = 0; j < grids[i].length; j++) {
-          grids[i][j] = new Grid (i, j, gridObs);
-          grids[i][j].heuristic();
-        }
-      }
-      //println(startGrid[0] + "cc" + startGrid[1]);
-      closed.add(grids[startGrid[0]][startGrid[1]]);
-      grids[startGrid[0]][startGrid[1]].link();
-      isDistFound = false;
-      while (!isDistFound){
-        Grid lowest = getMin();
-        
-        if (lowest == null) {
-          AstarFitness[sampx][sampy] = 1.0;
-          break;
-        }
-        closed.add(lowest);
-        open.remove(lowest);
-        lowest.link();
-        
-        for (int i = 0; i < open.size(); i++) {
-          if (open.get(i) == grids[goalGrid[0]][goalGrid[1]]) {
-            isDistFound = true;
-            AstarFitness[sampx][sampy] = open.get(i).f;
+    int dyObsTime = time % (map.DyObss[intDyObs].patrolTime*2);
+    if (dyObsTime == map.DyObss[intDyObs].patrolTime+1){
+      map.DyObss[intDyObs].dirX *= -1;
+      map.DyObss[intDyObs].dirY *= -1;
+    }
+    if (dyObsTime == 0){
+      map.DyObss[intDyObs].pos = map.DyObss[intDyObs].startPos.copy();
+    }
+    else{
+      map.DyObss[intDyObs].pos.add(new PVector(map.DyObss[intDyObs].dirX, map.DyObss[intDyObs].dirY).mult(map.DyObss[intDyObs].speed));
+    }  
+  }
+}
+
+
+void updateFitnessList(int WpSeq){
+  
+  // Initialize list table
+  AstarFitnessList = new ArrayList<double[][]>();
+  gridObsList = new ArrayList<int[][]>();
+  
+  // Loop through different dynamic time
+  for (int dyTimeCount = 0; dyTimeCount < dyTimeMax; dyTimeCount++){
+    // update grid obstacle informaton and store in list
+    gridObs = new int[mapW][mapH];
+    for (int x = 0; x < mapW; x++){
+      TableRow newRow = gridObsTable.addRow();
+      for (int y = 0; y < mapH; y++){
+        for (int intObs = 0; intObs < map.Obss.length; intObs++){
+          if ((x+0.5)*blkWidth >= map.Obss[intObs].pos.x && (x+0.5)*blkWidth < map.Obss[intObs].pos.x +  map.Obss[intObs].size.x &&
+          (y+0.5)*blkWidth >= map.Obss[intObs].pos.y && (y+0.5)*blkWidth < map.Obss[intObs].pos.y +  map.Obss[intObs].size.y){
+            gridObs[x][y] = 1;
           }
         }
-        if (grids[sampx][sampy].isWall) {
-          AstarFitness[sampx][sampy] = 1.0;
+        for (int intDyObs = 0; intDyObs < map.DyObss.length; intDyObs++){
+          if ((x+0.5)*blkWidth >= map.DyObss[intDyObs].pos.x && (x+0.5)*blkWidth < map.DyObss[intDyObs].pos.x +  map.DyObss[intDyObs].size.x &&
+          (y+0.5)*blkWidth >= map.DyObss[intDyObs].pos.y && (y+0.5)*blkWidth < map.DyObss[intDyObs].pos.y +  map.DyObss[intDyObs].size.y){
+            gridObs[x][y] = 1;
+          }
+        }
+        newRow.setInt(str(y), gridObs[x][y]);
+      }
+    }
+    gridObsList.add(gridObs);
+    
+    // update grid astar score information and store in list
+    AstarFitness = new double[mapW][mapH];
+    boolean isDistFound;
+    for (int sampx = 0; sampx < mapW; sampx++){
+      TableRow newRow = astarTable.addRow();
+      for (int sampy = 0; sampy < mapH; sampy++){
+        
+        open = new ArrayList<Grid>();
+        closed = new ArrayList<Grid>();
+         
+        startGrid = new int[] {sampx, sampy};
+        goalGrid = map.Wps[WpSeq].wpToGrid(map.mapSize);
+        
+        grids = new Grid[mapW][mapH];
+        for (int i = 0; i < grids.length; i++) {
+          for (int j = 0; j < grids[i].length; j++) {
+            grids[i][j] = new Grid (i, j, gridObs);
+            grids[i][j].heuristic();
+          }
         }
         
+        closed.add(grids[startGrid[0]][startGrid[1]]);
+        grids[startGrid[0]][startGrid[1]].link();
+        isDistFound = false;
+        while (!isDistFound){
+          Grid lowest = getMin();
+          
+          if (lowest == null) {
+            AstarFitness[sampx][sampy] = 1.0;
+            break;
+          }
+          closed.add(lowest);
+          open.remove(lowest);
+          lowest.link();
+          
+          for (int i = 0; i < open.size(); i++) {
+            if (open.get(i) == grids[goalGrid[0]][goalGrid[1]]) {
+              isDistFound = true;
+              AstarFitness[sampx][sampy] = open.get(i).f;
+            }
+          }
+          if (grids[sampx][sampy].isWall) {
+            AstarFitness[sampx][sampy] = 1.0;
+          }
+        }
+        AstarFitness[goalGrid[0]][goalGrid[1]] = 0.0;
+        newRow.setFloat(str(sampy), (float)AstarFitness[sampx][sampy]); //AstarFitness[sampx][sampy]);
       }
-      AstarFitness[goalGrid[0]][goalGrid[1]] = 0.0;
-      newRow.setFloat(str(sampy), (float)AstarFitness[sampx][sampy]); //AstarFitness[sampx][sampy]);
     }
+    AstarFitnessList.add(AstarFitness);
   }
-  
 }
 
-void updateObstacleTable(){
-  gridObs = new int[mapW][mapH];
-  for (int x = 0; x < mapW; x++){
-    TableRow newRow = gridObsTable.addRow();
-    for (int y = 0; y < mapH; y++){
-      for (int intobs = 0; intobs < map.Obss.length; intobs++){
-        if ((x+0.5)*blkWidth >= map.Obss[intobs].pos.x && (x+0.5)*blkWidth < map.Obss[intobs].pos.x +  map.Obss[intobs].size.x &&
-        (y+0.5)*blkWidth >= map.Obss[intobs].pos.y && (y+0.5)*blkWidth < map.Obss[intobs].pos.y +  map.Obss[intobs].size.y){
-          gridObs[x][y] = 1;
-          newRow.setInt(str(y), gridObs[x][y]);
-        }
-      }
-    }
-  }
-}
 
 float[] cmdDecipher(String inString){
   float[] returnCmd = new float[3];

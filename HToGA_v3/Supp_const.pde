@@ -5,12 +5,13 @@ class MapDB{
   PVector mapSize;
   Map[] Maps;
   Obstacle[] Obss;
+  DynamicObstacle[] DyObss;
   Waypoint[] Wps;
   boolean gridBasedMode ;
   
   MapDB(){
     
-    Maps = new Map[10];
+    Maps = new Map[11];
     
     // ---------map 01----------
     mapSize = new PVector(800, 800);
@@ -29,7 +30,7 @@ class MapDB{
     Obss[2] = new Obstacle(new PVector(500,100), new PVector(100, 100));
     
     
-    Maps[0] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    Maps[0] = new Map(mapSize, gridBasedMode, Wps, Obss, new DynamicObstacle[0]);
     
     // ---------map 02----------
     mapSize = new PVector(800,800);
@@ -44,7 +45,7 @@ class MapDB{
     Obss[0] = new Obstacle(new PVector(350, 0), new PVector(100, 600));
     Obss[1] = new Obstacle(new PVector(350, 700), new PVector(100, 500));
     
-    Maps[1] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    Maps[1] = new Map(mapSize, gridBasedMode, Wps, Obss, new DynamicObstacle[0]);
     
     // ---------map 03----------
     mapSize = new PVector(800,800);
@@ -59,7 +60,7 @@ class MapDB{
     Obss[0] = new Obstacle(new PVector(10*blkWidth, 0), new PVector(2*blkWidth, 26*blkWidth));
     Obss[1] = new Obstacle(new PVector(20*blkWidth, 6*blkWidth), new PVector(2*blkWidth, 26*blkWidth));
     
-    Maps[2] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    Maps[2] = new Map(mapSize, gridBasedMode, Wps, Obss, new DynamicObstacle[0]);
     
         // ---------map 04----------
     mapSize = new PVector(800,800);
@@ -74,7 +75,7 @@ class MapDB{
     Obss[0] = new Obstacle(new PVector(10*blkWidth, 0), new PVector(2*blkWidth, 20*blkWidth));
     Obss[1] = new Obstacle(new PVector(20*blkWidth, 6*blkWidth), new PVector(2*blkWidth, 20*blkWidth));
     
-    Maps[3] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    Maps[3] = new Map(mapSize, gridBasedMode, Wps, Obss, new DynamicObstacle[0]);
     
     // ---------map 05----------
     mapSize = new PVector(800,800);
@@ -90,7 +91,7 @@ class MapDB{
     Obss[1] = new Obstacle(new PVector(20*blkWidth, 6*blkWidth), new PVector(2*blkWidth, 10*blkWidth));
     Obss[2] = new Obstacle(new PVector(10*blkWidth, 20*blkWidth), new PVector(3*blkWidth, 3*blkWidth));
     
-    Maps[4] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    Maps[4] = new Map(mapSize, gridBasedMode, Wps, Obss, new DynamicObstacle[0]);
     
     // ---------map 06----------
     mapSize = new PVector(800,800);
@@ -105,7 +106,7 @@ class MapDB{
     Obss[0] = new Obstacle(new PVector(10*blkWidth, 0), new PVector(2*blkWidth, 20*blkWidth));
     Obss[1] = new Obstacle(new PVector(20*blkWidth, 10*blkWidth), new PVector(2*blkWidth, 30*blkWidth));
     
-    Maps[5] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    Maps[5] = new Map(mapSize, gridBasedMode, Wps, Obss, new DynamicObstacle[0]);
     
     
         
@@ -124,7 +125,7 @@ class MapDB{
     Obss[2] = new Obstacle(new PVector(16*blkWidth, 10*blkWidth), new PVector(2*blkWidth, 5*blkWidth));
     Obss[3] = new Obstacle(new PVector(16*blkWidth, 16*blkWidth), new PVector(2*blkWidth, 4*blkWidth));
     
-    Maps[6] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    Maps[6] = new Map(mapSize, gridBasedMode, Wps, Obss, new DynamicObstacle[0]);
     
    
     // ---------map 08---------- (vertical-I single slit)
@@ -142,7 +143,7 @@ class MapDB{
     Obss[2] = new Obstacle(new PVector(10*blkWidth, 16*blkWidth), new PVector(5*blkWidth, 2*blkWidth));
     Obss[3] = new Obstacle(new PVector(16*blkWidth, 16*blkWidth), new PVector(4*blkWidth, 2*blkWidth));
     
-    Maps[7] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    Maps[7] = new Map(mapSize, gridBasedMode, Wps, Obss, new DynamicObstacle[0]);
     
     
     // ---------map 09---------- (larger map, 3 slits, vertical-I and horizontal-I test)
@@ -172,7 +173,7 @@ class MapDB{
     //Obss[2] = new Obstacle(new PVector(10*blkWidth, 16*blkWidth), new PVector(5*blkWidth, 2*blkWidth));
     //Obss[3] = new Obstacle(new PVector(16*blkWidth, 16*blkWidth), new PVector(4*blkWidth, 2*blkWidth));
     
-    Maps[8] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    Maps[8] = new Map(mapSize, gridBasedMode, Wps, Obss, new DynamicObstacle[0]);
   
   // ---------map 10---------- (larger map, X-Y map axis correction)
     mapSize = new PVector(1475,1000);
@@ -205,11 +206,33 @@ class MapDB{
     Obss[11] = new Obstacle(new PVector(0, 38).mult(blkWidth), new PVector(60, 2).mult(blkWidth));
     
     
-    //Obss[1] = new Obstacle(new PVector(20*blkWidth, 0*blkWidth), new PVector(12*blkWidth, 32*blkWidth));
-    //Obss[2] = new Obstacle(new PVector(10*blkWidth, 16*blkWidth), new PVector(5*blkWidth, 2*blkWidth));
-    //Obss[3] = new Obstacle(new PVector(16*blkWidth, 16*blkWidth), new PVector(4*blkWidth, 2*blkWidth));
+    Maps[9] = new Map(mapSize, gridBasedMode, Wps, Obss, new DynamicObstacle[0]);
     
-    Maps[9] = new Map(mapSize, gridBasedMode, Wps, Obss);
+    
+    // ---------map 11---------- (vertical Dynamic)
+    mapSize = new PVector(800,800);
+    
+    gridBasedMode = true;
+     
+    Wps = new Waypoint[2];
+    Wps[0] = new Waypoint(new PVector(15*blkWidth, 7*blkWidth), 0); 
+    Wps[1] = new Waypoint(new PVector(15*blkWidth, 25*blkWidth), 0);
+    
+    Obss = new Obstacle[2];
+    Obss[0] = new Obstacle(new PVector(0*blkWidth, 0*blkWidth), new PVector(10*blkWidth, 32*blkWidth));
+    Obss[1] = new Obstacle(new PVector(21*blkWidth, 0*blkWidth), new PVector(12*blkWidth, 32*blkWidth));
+
+    DyObss = new DynamicObstacle[4];
+    DyObss[0] = new DynamicObstacle(new PVector(11, 16).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
+                                    1, 0, 25, 10);
+    DyObss[1] = new DynamicObstacle(new PVector(12, 16).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
+                                    1, 0, 25, 10);                                
+    DyObss[2] = new DynamicObstacle(new PVector(13, 16).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
+                                    1, 0, 25, 10);   
+    DyObss[3] = new DynamicObstacle(new PVector(14, 16).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
+                                    1, 0, 25, 10);   
+                                    
+    Maps[10] = new Map(mapSize, gridBasedMode, Wps, Obss, DyObss);
     
   }
 }
