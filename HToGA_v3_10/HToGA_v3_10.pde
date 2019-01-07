@@ -7,18 +7,22 @@ int maxTime = 100;
 
 // Begin of Adjustable Booleans 
 // -----------------------------------------------
-boolean forceRemove = true;            // Force remove unreasonalbe sequences
-boolean debugMode = false;             // For debug text display
+
+boolean dispSim = false;               // Toggle simulation screen display on Processing
 boolean dispText = false;              // Toggle text display on Processing
+boolean debugMode = false;             // For debug text display
+boolean multiTrials = true;            // Multiple trials for GA algorithm
 
 boolean mutTransInitialze = false;     // Toggle transformation mutate during initialzation phase
 boolean mutTransProcess = true;        // Toggle transformation mutate dueing navigation phase
 
+boolean forceRemove = true;            // Force remove unreasonalbe sequences
 boolean progressingFitness = true;     // Calculate fitness at each time instance if set to true
 boolean noRepeatingGrids = true;       // Prevent robot from revisiting previous grid
 
 boolean snapShift = true;              // Instantly snap to the correct angle during rotation/reconfiguration
 boolean colorfulRobot = true;          // A COLORFUL ELITE ROBOT!!!
+boolean singleFitnessList = true;      // single or multiple astar fitness list table for dynamic obstacle 
 // End of Adjustable Booleans
 //*************************************************
 //*************************************************
@@ -41,6 +45,7 @@ float bestPercentage = 0.1;
 
 int frameRefreshRate = 1000;           // Processing simulation frame refresh rate (default:1000)
 int totPopulation = 100;               // Total robot population size (default:100)
+int totTrials = 2;                       // Total number of trials (default: 50)
 float blkWidth = 25;                   // Robot block size (default:25)
 
 // Robot Perception Setup
@@ -70,12 +75,12 @@ int[] startGrid;                      // Starting grid for GA
 int[] goalGrid;                       // Goal grid for GA
 ArrayList<Grid> open = new ArrayList<Grid>();      // Open array for A star search
 ArrayList<Grid> closed = new ArrayList<Grid>();    // Closed array for A star search
-double[][] AstarFitness;              // A star fitness matrix for the map
+//double[][] AstarFitness;              // A star fitness matrix for the map
 ArrayList<double[][]> AstarFitnessList; // Stores several fitness matrices for the map
 int[][] gridObs;                      // Grid obstacle matrix
 ArrayList<int[][]> gridObsList;       // Stores several grid obstacle matrices for the map
 //int dyTime;                           // dynamic time for Astar fitness table loading
-int dyTimeMax = 10;                        // Maximum dynamic time
+int dyTimeMax = 10;                     // Maximum dynamic time
 
                       
 PFont dispFont;                       // Grid Font display 
@@ -106,22 +111,13 @@ void settings() {
   morphNum = new Morphology().RelAng.length+1;
   
   // Size the window first before setup and display
-  size((int)map.mapSize.x, (int)map.mapSize.y); 
-  
+  if (dispSim){
+    size((int)map.mapSize.x, (int)map.mapSize.y); 
+  }
+      
 }
 
 void setup(){
-  /*
-  ArrayList<double[][]> kkk = new ArrayList<double[][]>();
-  double[][] ss = new double[1][2];
-  ss[0][0] = 10;
-  ss[0][1] = 100;
-  kkk.add(ss);
-  double[][] ss2 = new double[1][2];
-  ss2[0][0] = 20;
-  ss2[0][1] = 200;
-  kkk.add(ss2);
-  */
  
   // Preperation of data logging
   popTable = new Table();
@@ -135,15 +131,15 @@ void setup(){
   
   // Display font
   dispFont = createFont("Arial",8,true); 
-  
-  // Load starting population
-  test = new Population(totPopulation, maxTime , map.Obss);
   frameRate(frameRefreshRate);
   
   // Calculate map grid width and height based on map size and block width
   mapW = floor(map.mapSize.x/blkWidth);
   mapH = floor(map.mapSize.y/blkWidth);
   
+  // Load starting population
+  test = new Population(totPopulation, maxTime , map.Obss);
+    
   // Data logging for A star table and grid obstacle table
   astarTable = new Table();
   gridObsTable = new Table();
@@ -159,94 +155,102 @@ void setup(){
 }
 
 void draw() { 
-  
-  background(255);
-  fill(0);
-  textAlign(LEFT); 
-  textFont(dispFont);
-  for (int i = 0; i < grids.length; i++) {
-    for (int j = 0; j < grids[i].length; j++) {
-      text("("+i+","+j+")", i*blkWidth, j*blkWidth+18);
+  if (dispSim){
+    background(255);
+    fill(0);
+    textAlign(LEFT); 
+    textFont(dispFont);
+    for (int i = 0; i < grids.length; i++) {
+      for (int j = 0; j < grids[i].length; j++) {
+        text("("+i+","+j+")", i*blkWidth, j*blkWidth+18);
+      }
+    }
+    
+    // Draw waypoints
+    fill(255, 0, 0);
+    for (int wpidx = 0; wpidx < map.Wps.length ; wpidx++){
+      rect(map.Wps[wpidx].pos.x, map.Wps[wpidx].pos.y, blkWidth, blkWidth);
+    }
+    fill(255, 153, 50);
+    rect(map.Wps[currentWpID+1].pos.x, map.Wps[currentWpID+1].pos.y, blkWidth, blkWidth);
+    
+    // Draw obstacle(s)
+    fill(0, 0, 255);
+    for (int intobs = 0; intobs < map.Obss.length; intobs++){
+      rect(map.Obss[intobs].pos.x, map.Obss[intobs].pos.y, map.Obss[intobs].size.x, map.Obss[intobs].size.y);
+    }
+    for (int intDyobs = 0; intDyobs < map.DyObss.length; intDyobs++){
+      rect(map.DyObss[intDyobs].pos.x, map.DyObss[intDyobs].pos.y, map.DyObss[intDyobs].size.x, map.DyObss[intDyobs].size.y);
+    }
+   
+    // Draw grids
+    stroke(125);
+    for (int rowidx = 0; rowidx <= (int)map.mapSize.x/blkWidth; rowidx++){
+      line(rowidx*blkWidth, 0, rowidx*blkWidth, map.mapSize.y);
+    }
+    for (int colidx = 0; colidx <= (int)map.mapSize.y/blkWidth; colidx++){
+      line(0, colidx*blkWidth,  map.mapSize.x, colidx*blkWidth);
     }
   }
-  
-  // Draw waypoints
-  fill(255, 0, 0);
-  for (int wpidx = 0; wpidx < map.Wps.length ; wpidx++){
-    rect(map.Wps[wpidx].pos.x, map.Wps[wpidx].pos.y, blkWidth, blkWidth);
-  }
-  fill(255, 153, 50);
-  rect(map.Wps[currentWpID+1].pos.x, map.Wps[currentWpID+1].pos.y, blkWidth, blkWidth);
-  
-  // Draw obstacle(s)
-  fill(0, 0, 255);
-  for (int intobs = 0; intobs < map.Obss.length; intobs++){
-    rect(map.Obss[intobs].pos.x, map.Obss[intobs].pos.y, map.Obss[intobs].size.x, map.Obss[intobs].size.y);
-  }
-  for (int intDyobs = 0; intDyobs < map.DyObss.length; intDyobs++){
-    rect(map.DyObss[intDyobs].pos.x, map.DyObss[intDyobs].pos.y, map.DyObss[intDyobs].size.x, map.DyObss[intDyobs].size.y);
-  }
- 
-  // Draw grids
-  stroke(125);
-  for (int rowidx = 0; rowidx <= (int)map.mapSize.x/blkWidth; rowidx++){
-    line(rowidx*blkWidth, 0, rowidx*blkWidth, map.mapSize.y);
-  }
-  for (int colidx = 0; colidx <= (int)map.mapSize.y/blkWidth; colidx++){
-    line(0, colidx*blkWidth,  map.mapSize.x, colidx*blkWidth);
-  }
-  
   mainLoop();
 }
 
 void mainLoop(){
-  if (!terminate){
-    if (test.allRobotsDead()) {
-      
-      time = 0;
-      test.calculateFitness();      // Calculate Population Fitness
-      boolean overTime = test.naturalSelection();      // Perform Natural Selection
-      
-      if (overTime){
-        println("GA maximum time used. Waypoint navigation process terminating...");
-        saveTable(popTable, "data/GAresult.csv");
-        terminate = true;
+  for (int intTrials = 0; intTrials < totTrials; intTrials++) {
+
+    terminate = false;
+    if (!terminate){
+      if (test.allRobotsDead()) {
         
-      }else{
-        test.GAMutation();            // Perform GA Mutation
-        test.GACrossover();           // Perform GA Crossover
-        test.GARemoveTwoDir();        // Remove two opposite directions in a gene
-        test.GARemoveExtraShapes();   // Randomly remove shapes
-        test.clearReachHistory();
+        time = 0;
+        test.calculateFitness();      // Calculate Population Fitness
+        boolean overTime = test.naturalSelection();      // Perform Natural Selection
         
-        if (dispText){
-          println("==================================");
-          println("Navigation " + test.gen + " result:" );
-        }
-        if (test.isConverged()){
-          if (currentWpID < map.Wps.length-2){
-            currentWpID += 1;
-            println("GA converged! Now navigating from wp " + currentWpID + " to wp " + str(currentWpID+1)); 
-            updateFitnessList(currentWpID+1);  
-            test = new Population(totPopulation, maxTime, map.Obss);
-          }else{
-            println("GA converged! Waypoint navigation process terminates.");
-            saveTable(popTable, "data/GAresult.csv");
-            terminate = true;
+        if (overTime){
+          println("GA maximum time used. Waypoint navigation process terminating...");
+          saveTable(popTable, "data/GAresult.csv");
+          terminate = true;
+          
+        }else{
+          test.GAMutation();            // Perform GA Mutation
+          test.GACrossover();           // Perform GA Crossover
+          test.GARemoveTwoDir();        // Remove two opposite directions in a gene
+          test.GARemoveExtraShapes();   // Randomly remove shapes
+          test.clearReachHistory();
+          
+          if (dispText){
+            println("==================================");
+            println("Navigation " + test.gen + " result:" );
           }
+          if (test.isConverged()){
+            if (currentWpID < map.Wps.length-2){
+              currentWpID += 1;
+              println("GA converged! Now navigating from wp " + currentWpID + " to wp " + str(currentWpID+1)); 
+              updateFitnessList(currentWpID+1);  
+              test = new Population(totPopulation, maxTime, map.Obss);
+            }else{
+              println("GA converged! Waypoint navigation process terminates.");
+              saveTable(popTable, "data/GAresult.csv");
+              terminate = true;
+              if (intTrials+1 < totTrials){
+                test = new Population(totPopulation, maxTime , map.Obss);
+                currentWpID = 0; 
+              }
+            }
+          }
+          test.resetFitness();
         }
-        test.resetFitness();
+        
+      } else {
+        test.update();
+        if (progressingFitness){
+          test.calculateFitness();
+        }
+        if (dispSim) test.show();
+        time++;
+        MutMoveRate = baseMutMoveRate;
+        updateDynamicObstaclePos();
       }
-      
-    } else {
-      test.update();
-      if (progressingFitness){
-        test.calculateFitness();
-      }
-      test.show();
-      time++;
-      MutMoveRate = baseMutMoveRate;
-      updateDynamicObstaclePos();
     }
   }
 }
