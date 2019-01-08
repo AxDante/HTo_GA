@@ -1,17 +1,17 @@
 void updateDynamicObstaclePos(){
   // update dynamic obstacle position
-  for (int intDyObs = 0; intDyObs < map.DyObss.length; intDyObs++){
+  for (int intDyObs = 0; intDyObs < map.DyObssList.size(); intDyObs++){
     
-    int dyObsTime = time % (map.DyObss[intDyObs].patrolTime*2);
-    if (dyObsTime == map.DyObss[intDyObs].patrolTime+1){
-      map.DyObss[intDyObs].dirX *= -1;
-      map.DyObss[intDyObs].dirY *= -1;
+    int dyObsTime = time % (map.DyObssList.get(intDyObs).patrolTime*2);
+    if (dyObsTime == map.DyObssList.get(intDyObs).patrolTime+1){
+      map.DyObssList.get(intDyObs).dirX *= -1;
+      map.DyObssList.get(intDyObs).dirY *= -1;
     }
     if (dyObsTime == 0){
-      map.DyObss[intDyObs].pos = map.DyObss[intDyObs].startPos.copy();
+      map.DyObssList.get(intDyObs).pos = map.DyObssList.get(intDyObs).startPos.copy();
     }
     else{
-      map.DyObss[intDyObs].pos.add(new PVector(map.DyObss[intDyObs].dirX, map.DyObss[intDyObs].dirY).mult(map.DyObss[intDyObs].speed));
+      map.DyObssList.get(intDyObs).pos.add(new PVector(map.DyObssList.get(intDyObs).dirX, map.DyObssList.get(intDyObs).dirY).mult(map.DyObssList.get(intDyObs).speed));
     }  
   }
 }
@@ -46,9 +46,9 @@ void updateFitnessList(int WpSeq){
             gridObs[x][y] = 1;
           }
         }
-        for (int intDyObs = 0; intDyObs < map.DyObss.length; intDyObs++){
-          if ((x+0.5)*blkWidth >= map.DyObss[intDyObs].pos.x && (x+0.5)*blkWidth < map.DyObss[intDyObs].pos.x +  map.DyObss[intDyObs].size.x &&
-          (y+0.5)*blkWidth >= map.DyObss[intDyObs].pos.y && (y+0.5)*blkWidth < map.DyObss[intDyObs].pos.y +  map.DyObss[intDyObs].size.y){
+        for (int intDyObs = 0; intDyObs < map.DyObssList.size(); intDyObs++){
+          if ((x+0.5)*blkWidth >= map.DyObssList.get(intDyObs).pos.x && (x+0.5)*blkWidth < map.DyObssList.get(intDyObs).pos.x +  map.DyObssList.get(intDyObs).size.x &&
+          (y+0.5)*blkWidth >= map.DyObssList.get(intDyObs).pos.y && (y+0.5)*blkWidth < map.DyObssList.get(intDyObs).pos.y +  map.DyObssList.get(intDyObs).size.y){
             gridObs[x][y] = 1;
           }
         }

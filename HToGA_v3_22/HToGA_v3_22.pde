@@ -2,7 +2,7 @@ Population test;
 MapDB mapDB;
 Map map; 
 
-int mapID = 12;
+int mapID = 9;
 int maxTime = 100;
 
 // Begin of Adjustable Booleans 
@@ -43,7 +43,7 @@ float baseCrossoverRate = 0.0;
 float moveTransRatio = 100.0;
 
 float bestPercentage = 0.1;
-
+ 
 int frameRefreshRate = 1000;           // Processing simulation frame refresh rate (default:1000)
 int totPopulation = 50;               // Total robot population size (default:100)
 int totTrials = 10;                    // Total number of trials (default: 50)
@@ -81,7 +81,7 @@ ArrayList<double[][]> AstarFitnessList; // Stores several fitness matrices for t
 int[][] gridObs;                      // Grid obstacle matrix
 ArrayList<int[][]> gridObsList;       // Stores several grid obstacle matrices for the map
 //int dyTime;                           // dynamic time for Astar fitness table loading
-int dyTimeMax = 10;                     // Maximum dynamic time
+int dyTimeMax = 18;                     // Maximum dynamic time
 
                       
 PFont dispFont;                       // Grid Font display 
@@ -203,8 +203,8 @@ void draw() {
     for (int intobs = 0; intobs < map.Obss.length; intobs++){
       rect(map.Obss[intobs].pos.x, map.Obss[intobs].pos.y, map.Obss[intobs].size.x, map.Obss[intobs].size.y);
     }
-    for (int intDyobs = 0; intDyobs < map.DyObss.length; intDyobs++){
-      rect(map.DyObss[intDyobs].pos.x, map.DyObss[intDyobs].pos.y, map.DyObss[intDyobs].size.x, map.DyObss[intDyobs].size.y);
+    for (int intDyobs = 0; intDyobs < map.DyObssList.size(); intDyobs++){
+      rect(map.DyObssList.get(intDyobs).pos.x, map.DyObssList.get(intDyobs).pos.y, map.DyObssList.get(intDyobs).size.x, map.DyObssList.get(intDyobs).size.y);
     }
    
     // Draw grids
@@ -231,6 +231,7 @@ void mainLoop(){
         time = 0;
         test.calculateFitness();      // Calculate Population Fitness
         boolean overTime = test.naturalSelection();      // Perform Natural Selection
+        
         
         if (overTime){
           println("T"+ intTrials + " Wp" + currentWpID + " : GA maximum time used.");
@@ -282,9 +283,9 @@ void mainLoop(){
         // Create new population if more trials remain
         popTableInitialize();
         test = new Population(totPopulation, maxTime, map.Obss);
-        updateFitnessList(1);
         currentWpID = 0; 
         time = 0;
+        updateFitnessList(1);
         println(" --- Trial " + intTrials + " ---");
         fitnessTableRow = fitnessTable.addRow();
         fitnessTableRow.setInt("Trial No.", intTrials);
