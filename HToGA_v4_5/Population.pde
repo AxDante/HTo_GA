@@ -3,6 +3,8 @@ class Population {
   Robot[] prevGoodRbts;
   Robot[] Rbts;
   Robot[] newRbts;
+  Robot[] newMutRbts;
+  Robot[] newSwapRbts;
   Obstacle[] Obss;
 
   float fitnessSum;
@@ -22,7 +24,7 @@ class Population {
   ArrayList<Robot> unsortRobotListCopy;
   ArrayList<ArrayList<Robot>> Front; 
   ArrayList<ArrayList<Robot>> cdFront;
-  int maxFront = 15;
+  int maxFront = 100;
   
   int bestCostCDRbtID;
   int bestSmoothCDRbtID;
@@ -54,8 +56,8 @@ class Population {
     Obss = Obss_;
     bestTime = minStep_;
     genSize = size;
-    Rbts = new Robot[genSize*2];
-    for (int i = 0; i < genSize*2; i++) {
+    Rbts = new Robot[genSize*4];
+    for (int i = 0; i < genSize*4; i++) {
       Rbts[i] = new Robot();
     }
     StepData = new float[minStep_];
@@ -87,17 +89,12 @@ class Population {
     for (int rbtidx = 0; rbtidx< Rbts.length; rbtidx++) {
       curRbt = Rbts[rbtidx];
       if (!curRbt.dead){
-        
         if (curRbt.brain.curTime >= maxTime){
           curRbt.dead = true;
         } 
         if (isCollideRbt(Rbts[rbtidx])){
           curRbt.dead = true;
         } 
-        //What is this?
-        //if (curRbt.brain.Cmds.size() <= time){
-        //  curRbt.dead = true;
-        //}
       }
       if (!curRbt.dead){   
         if (!curRbt.reachedGoal){
@@ -151,9 +148,10 @@ class Population {
         }
         println(toWrite);
         */
+        
       } else {
         int[] gridPos = Rbts[i].Blks[1].blkGridPos(map.mapSize);
-        tempFitness = (float)(10/(1+getGridFitnessValue(gridPos[0],gridPos[1], 4)));
+        tempFitness = (float)(10/(1+getGridFitnessValue(gridPos[0],gridPos[1], 2)));
         if (progressingFitness){
           if (tempFitness > Rbts[i].fitness){
             Rbts[i].fitness = tempFitness;
@@ -173,7 +171,7 @@ class Population {
       Rbts[i].fitness = 0;
       Rbts[i].costScore = 0;
       Rbts[i].smoothScore = 0;
-      Rbts[i].safeScore = 0;
+      Rbts[i].safeScore = 1;
     }
   }
 
@@ -195,7 +193,7 @@ class Population {
     if (gen-1 > minConvergeSample) {
       float genDiff = (StepData[gen-1-minConvergeSample] - StepData[gen-1]);
       if (dispText) println("generation resutls difference:  " + genDiff);
-      if (StepData[gen-1-minConvergeSample] != -1 && (StepData[gen-1-minConvergeSample] - StepData[gen-1]) <= maxConvergeDiff){
+      if (StepData[gen-1-minConvergeSample] != -1 && abs(StepData[gen-1-minConvergeSample] - StepData[gen-1]) <= maxConvergeDiff){
         return true;
       }
     }
@@ -207,12 +205,11 @@ class Population {
 
     // copy Rbt array to nsga arraylist
     unsortRobotList = new ArrayList<Robot>();
-    for (int i = 0; i< genSize*2; i++) {
+    for (int i = 0; i< genSize*4; i++) {
       Rbts[i].popID = i;
       unsortRobotList.add(Rbts[i]);
     }
     unsortRobotListCopy = (ArrayList) unsortRobotList.clone();
-    
     
     Front = new ArrayList<ArrayList<Robot>>(); 
     cdFront = new ArrayList<ArrayList<Robot>>(); 
@@ -220,24 +217,13 @@ class Population {
       Front.add(new ArrayList<Robot>());
       cdFront.add(new ArrayList<Robot>());
     }
-    
-    
+
     nonReached = true;
     nrBestCost = 0;
     nrBestCostRbtID = 0;
     for (int rbtidx = 0; rbtidx < unsortRobotList.size(); rbtidx++){
       Robot curGARobot = unsortRobotList.get(rbtidx);
       if (curGARobot.reachedGoal){
-        
-        //println("Robot with ID " + curGARobot.popID + " reached the goal.") + " length: " + nf(curGARobot.brain.Cmds.size(),2);
-        print("RobotID " + nf(curGARobot.popID,3)  + " score: " + nf(curGARobot.costScore,2,2) + " cmds: " );
-        String toWrite;
-        toWrite = "";
-        for (int cmdidx = 0; cmdidx < curGARobot.brain.Cmds.size(); cmdidx++){
-          toWrite += curGARobot.brain.Cmds.get(cmdidx);
-        }
-        println(toWrite);
-        
         nonReached = false; 
       }
       if (curGARobot.costScore > nrBestCost){
@@ -277,22 +263,13 @@ class Population {
               paretoBest = false;
             }
           }
+          
           if (paretoBest && curGARobot.reachedGoal){
-            boolean isRepeat = false;
-            for (int frontidx = 0; frontidx < Front.get(frontCount).size(); frontidx++){
-              if (Front.get(frontCount).get(frontidx).costScore == curGARobot.costScore &&
-                  Front.get(frontCount).get(frontidx).smoothScore == curGARobot.smoothScore &&
-                  Front.get(frontCount).get(frontidx).safeScore == curGARobot.safeScore ){
-                isRepeat = true;
-                break;
-              }
-            }
-            if (!isRepeat){
-              curGARobot.frontRank = frontCount;
-              Front.get(frontCount).add(curGARobot);
-              countLength++;
-              removeList.add(rbtidx);
-            }
+            //if (curGARobot.popID > 100) println("add " + curGARobot.popID);
+            curGARobot.frontRank = frontCount;
+            Front.get(frontCount).add(curGARobot);
+            countLength++;
+            removeList.add(rbtidx);
           }
           if (countLength == requiredLength){
             break;
@@ -312,7 +289,17 @@ class Population {
       //Update parent robot list
       parentRobotList = new ArrayList<Robot>();
       for (int frontidx = 0; frontidx < frontCount; frontidx++){
-        parentRobotList.addAll(Front.get(frontidx));
+        for (int rbtidx = 0; rbtidx < Front.get(frontidx).size(); rbtidx++){
+          boolean isRepeat = false;
+          for (int listidx = 0; listidx < parentRobotList.size(); listidx++){
+            if (parentRobotList.get(listidx).costScore == Front.get(frontidx).get(rbtidx).costScore){
+              isRepeat = true;
+            }
+          }
+          if (!isRepeat){
+            parentRobotList.add(Front.get(frontidx).get(rbtidx));
+          }
+        }
       }
       
       float costDiff;
@@ -323,38 +310,24 @@ class Population {
       ArrayList<Robot> ar2 = new ArrayList<Robot>();
       ArrayList<Robot> ar3 = new ArrayList<Robot>();
       
-      bestCostCDRbtID = 0;
-      bestSmoothCDRbtID = 0;
-      bestSafeCDRbtID = 0;
-      bestSumCDRbtID = 0;
-      
       bestCostCD = bigNum;
+      bestCostCDRbtID = 0;
       bestSmoothCD = bigNum;
+      bestSmoothCDRbtID = 0;            
       bestSafeCD = bigNum;
+      bestSafeCDRbtID = 0;           
       bestSumCD = bigNum;
-      
+      bestSumCDRbtID = 0;
       bestCost = 0;
+      bestCostRbtID = 0;
       bestSmooth = 0;
+      bestSmoothRbtID = 0;            
       bestSafe = 0;
+      bestSafeRbtID = 0;           
       bestSum = 0;
+      bestSumRbtID = 0;
       
-      bestCostCD = Front.get(0).get(0).costCD;
-      bestCostCDRbtID = Front.get(0).get(0).popID;
-      bestSmoothCD = Front.get(0).get(0).smoothCD;
-      bestSmoothCDRbtID = Front.get(0).get(0).popID;            
-      bestSafeCD = Front.get(0).get(0).safeCD;
-      bestSafeCDRbtID = Front.get(0).get(0).popID;           
-      bestSumCD = Front.get(0).get(0).sumCD;
-      bestSumCDRbtID = Front.get(0).get(0).popID;
-      bestCost = Front.get(0).get(0).costScore;
-      bestCostRbtID = Front.get(0).get(0).popID;
-      bestSmooth = Front.get(0).get(0).smoothScore;
-      bestSmoothRbtID = Front.get(0).get(0).popID;            
-      bestSafe = Front.get(0).get(0).safeScore;
-      bestSafeRbtID = Front.get(0).get(0).popID;           
-      bestSum = Front.get(0).get(0).sumScore;
-      bestSumRbtID = Front.get(0).get(0).popID;
-      
+      boolean notInit = true;
       
       for (int frontidx = 0; frontidx < frontCount; frontidx++){
         
@@ -365,7 +338,7 @@ class Population {
         ar1 = (ArrayList)Front.get(frontidx).clone();
         ar2 = (ArrayList)Front.get(frontidx).clone();
         ar3 = (ArrayList)Front.get(frontidx).clone();
-        
+
         Collections.sort(ar1, new sortByCost()); 
         Collections.sort(ar2, new sortBySmooth()); 
         Collections.sort(ar3, new sortBySafe()); 
@@ -380,9 +353,7 @@ class Population {
         safeDiff = (safeDiff == 0)? 1/bigNum : safeDiff;
         
         for (int rbtidx = 0; rbtidx < Front.get(frontidx).size(); rbtidx++){
-          //println("arisize " +  ar1.size() + "  popid" +   Front.get(frontidx).get(rbtidx).popID);
           for (int aridx = 0; aridx < ar1.size(); aridx++){
-            //println("ar1.get(aridx).popID  " + ar1.get(aridx).popID);
             if (aridx == 0 || aridx == ar1.size()-1){
               if (ar1.get(aridx).popID == Front.get(frontidx).get(rbtidx).popID){
                 Front.get(frontidx).get(rbtidx).costCD = bigNum;
@@ -421,87 +392,103 @@ class Population {
           Front.get(frontidx).get(rbtidx).sumCD = Front.get(frontidx).get(rbtidx).costCD + Front.get(frontidx).get(rbtidx).smoothCD + 
                                                          Front.get(frontidx).get(rbtidx).safeCD;
           
-          
-          /*
-          println("Front rbt " + rbtidx + " (ID,Rk,c,sm,sf,sum)  = (" + Front.get(frontidx).get(rbtidx).popID + ", " +
-                                                                Front.get(frontidx).get(rbtidx).frontRank + ", " +
-                                                                Front.get(frontidx).get(rbtidx).costCD + ", " + 
-                                                                Front.get(frontidx).get(rbtidx).smoothCD + ", "+
-                                                                Front.get(frontidx).get(rbtidx).safeCD + ", " +
-                                                                Front.get(frontidx).get(rbtidx).sumCD + ") ("+
-                                                                Front.get(frontidx).get(rbtidx).costScore + ", " +
-                                                                Front.get(frontidx).get(rbtidx).smoothScore + ", " +
-                                                                Front.get(frontidx).get(rbtidx).safeScore + ", " +
-                                                                Front.get(frontidx).get(rbtidx).sumScore + ") ");                                               
-          */
-          
-           println("Front rbt " + rbtidx + " (c,sm,sf,sum)  = (" + Front.get(frontidx).get(rbtidx).popID + ", " +
-                                                                Front.get(frontidx).get(rbtidx).frontRank + ")( " +
-                                                                Front.get(frontidx).get(rbtidx).costScore + ", " +
-                                                                Front.get(frontidx).get(rbtidx).smoothScore + ", " +
-                                                                Front.get(frontidx).get(rbtidx).safeScore + ", " +
-                                                                Front.get(frontidx).get(rbtidx).sumScore + ") "); 
-          
+
+         
           if (frontidx == 0){
-            if (Front.get(0).get(rbtidx).costCD < bestCostCD && Front.get(0).get(rbtidx).sumCD < bigNum){
+            if (notInit){
+              notInit = false;
+              bestCostCD = Front.get(0).get(0).costCD;
+              bestCostCDRbtID = Front.get(0).get(0).popID;
+              bestSmoothCD = Front.get(0).get(0).smoothCD;
+              bestSmoothCDRbtID = Front.get(0).get(0).popID;            
+              bestSafeCD = Front.get(0).get(0).safeCD;
+              bestSafeCDRbtID = Front.get(0).get(0).popID;           
+              bestSumCD = Front.get(0).get(0).sumCD;
+              bestSumCDRbtID = Front.get(0).get(0).popID;
+              bestCost = Front.get(0).get(0).costScore;
+              bestCostRbtID = Front.get(0).get(0).popID;
+              bestSmooth = Front.get(0).get(0).smoothScore;
+              bestSmoothRbtID = Front.get(0).get(0).popID;            
+              bestSafe = Front.get(0).get(0).safeScore;
+              bestSafeRbtID = Front.get(0).get(0).popID;           
+              bestSum = Front.get(0).get(0).sumScore;
+              bestSumRbtID = Front.get(0).get(0).popID;
+            }
+            
+            println("Front rbt " + rbtidx + " (ID,Rk,c,sm,sf,sum)  = (" + Front.get(frontidx).get(rbtidx).popID + ", " +
+                                                      Front.get(frontidx).get(rbtidx).frontRank + ", " +
+                                                      Front.get(frontidx).get(rbtidx).costCD + ", " + 
+                                                      Front.get(frontidx).get(rbtidx).smoothCD + ", "+
+                                                      Front.get(frontidx).get(rbtidx).safeCD + ", " +
+                                                      Front.get(frontidx).get(rbtidx).sumCD + ") ("+
+                                                      Front.get(frontidx).get(rbtidx).costScore + ", " +
+                                                      Front.get(frontidx).get(rbtidx).smoothScore + ", " +
+                                                      Front.get(frontidx).get(rbtidx).safeScore + ", " +
+                                                      Front.get(frontidx).get(rbtidx).sumScore + ") ");    
+            print("RobotID " + nf(Front.get(frontidx).get(rbtidx).popID,3) + " score: " + nf(Front.get(frontidx).get(rbtidx).costScore,2,2) + " cmds: " );
+            String toWrite;
+            toWrite = "";
+            for (int cmdidx = 0; cmdidx < Front.get(frontidx).get(rbtidx).brain.Cmds.size(); cmdidx++){
+              toWrite += Front.get(frontidx).get(rbtidx).brain.Cmds.get(cmdidx);
+            }
+            println(toWrite);
+            
+            
+            println("(" + bestCostCD + "," + bestSmoothCD + "," + bestSafeCD + "," + bestSumCD + ")");
+            if (Front.get(0).get(rbtidx).costCD < bestCostCD){ // && Front.get(0).get(rbtidx).sumCD < bigNum){
               bestCostCD = Front.get(0).get(rbtidx).costCD;
               bestCostCDRbtID = Front.get(0).get(rbtidx).popID;
             }
-            if (Front.get(0).get(rbtidx).smoothCD < bestSmoothCD && Front.get(0).get(rbtidx).sumCD < bigNum){
+            if (Front.get(0).get(rbtidx).smoothCD < bestSmoothCD){ // && Front.get(0).get(rbtidx).sumCD < bigNum){
               bestSmoothCD = Front.get(0).get(rbtidx).smoothCD;
               bestSmoothCDRbtID = Front.get(0).get(rbtidx).popID;
             }
-            if (Front.get(0).get(rbtidx).safeCD < bestSafeCD && Front.get(0).get(rbtidx).sumCD < bigNum){
+            if (Front.get(0).get(rbtidx).safeCD < bestSafeCD){ // && Front.get(0).get(rbtidx).sumCD < bigNum){
               bestSafeCD = Front.get(0).get(rbtidx).safeCD;
               bestSafeCDRbtID = Front.get(0).get(rbtidx).popID;
             }
-            if (Front.get(0).get(rbtidx).sumCD < bestSumCD  && Front.get(0).get(rbtidx).sumCD < bigNum){
+            if (Front.get(0).get(rbtidx).sumCD < bestSumCD ){ //  && Front.get(0).get(rbtidx).sumCD < bigNum){
               bestSumCD = Front.get(0).get(rbtidx).sumCD;
               bestSumCDRbtID = Front.get(0).get(rbtidx).popID;
             }
             
-            if (Front.get(0).get(rbtidx).costScore > bestCost && Front.get(0).get(rbtidx).sumCD < bigNum){
+            if (Front.get(0).get(rbtidx).costScore > bestCost){
               bestCost = Front.get(0).get(rbtidx).costScore;
               bestCostRbtID = Front.get(0).get(rbtidx).popID;
             }
-            if (Front.get(0).get(rbtidx).smoothScore > bestSmooth && Front.get(0).get(rbtidx).sumCD < bigNum){
+            if (Front.get(0).get(rbtidx).smoothScore > bestSmooth){
               bestSmooth = Front.get(frontidx).get(rbtidx).smoothScore;
               bestSmoothRbtID = Front.get(frontidx).get(rbtidx).popID;
             }
-            if (Front.get(0).get(rbtidx).safeScore > bestSafe && Front.get(0).get(rbtidx).sumCD < bigNum){
+            if (Front.get(0).get(rbtidx).safeScore > bestSafe){
               bestSafe = Front.get(frontidx).get(rbtidx).safeScore;
               bestSafeRbtID = Front.get(frontidx).get(rbtidx).popID;
             }
-            if (Front.get(0).get(rbtidx).sumScore > bestSum  && Front.get(0).get(rbtidx).sumCD < bigNum){
+            if (Front.get(0).get(rbtidx).sumScore > bestSum){
               bestSum = Front.get(0).get(rbtidx).sumScore;
               bestSumRbtID = Front.get(0).get(rbtidx).popID;
             }
           }
         }
       }
-      //println("=====================");
-      //println("bestSumCDRbtID: " + bestSumCDRbtID + "; bestSafeCDRbtID: " + bestSafeCDRbtID +  "; bestSmoothCDRbtID: " + bestSmoothCDRbtID + "; bestCostCDRbtID: " + bestCostCDRbtID );
-      //println("bestSumRbtID: " + bestSumRbtID + "; bestSafeRbtID: " + bestSafeRbtID +  "; bestSmoothRbtID: " + bestSmoothRbtID + "; bestCostRbtID: " + bestCostRbtID );
-     // println("=====================");
+      
+      println("=====================");
+      println("bestSumCDRbtID: " + bestSumCDRbtID + "; bestSafeCDRbtID: " + bestSafeCDRbtID +  "; bestSmoothCDRbtID: " + bestSmoothCDRbtID + "; bestCostCDRbtID: " + bestCostCDRbtID );
+      println("bestSumRbtID: " + bestSumRbtID + "; bestSafeRbtID: " + bestSafeRbtID +  "; bestSmoothRbtID: " + bestSmoothRbtID + "; bestCostRbtID: " + bestCostRbtID );
+      println("=====================");
+      
       
       ArrayList<Robot> arCost = new ArrayList<Robot>();
       arCost = (ArrayList) unsortRobotListCopy.clone();
       Collections.sort(arCost, new sortByCost()); 
       
       //parentRobotList = new ArrayList<Robot>();
-      int lowerBound = genSize + parentRobotList.size();
-      for (int costidx = arCost.size()-1; costidx >= lowerBound; costidx--){
-        parentRobotList.add(arCost.get(costidx));
+      while (parentRobotList.size() < genSize){
+        Robot parentRbt = selectParent(unsortRobotListCopy);
+        parentRobotList.add(parentRbt);
       }
-      //while (parentRobotList.size() < genSize){
-      //  parentRobotList.add(unsortRobotListCopy.get(bestSumRbtID));
-      //}
       
-      //DEBUG
-      //println("IN PARENT ROBOT LIST:");
-      //for (int i = 0; i< parentRobotList.size(); i++){
-      //  println("ID: " + parentRobotList.get(i).popID);
-      //}
+      
     }
   }
   
@@ -510,26 +497,35 @@ class Population {
     nsga2();
     nsga2RecordData();
     
+    //if (Rbts[bestRobot].reachedGoal) {
+    //if (unsortRobotListCopy.get(bestSumRbtID).reachedGoal) {
+    //  bestTime = unsortRobotListCopy.get(bestSumRbtID).brain.curTime;
+    //  StepData[bestSumRbtID] = bestTime; 
+
     if (nonReached){
-      fitnessSum = 0;
-      for (int i = 0; i< parentRobotList.size(); i++) {
-        fitnessSum += parentRobotList.get(i).fitness;
-      }
       newRbts = new Robot[genSize];
-      newRbts[0] = unsortRobotList.get(nrBestCostRbtID).gimmeBaby();
-      for  (int i = 1; i < newRbts.length; i++) {
-        Robot parent = selectParent();
+      newMutRbts = new Robot[genSize];
+      newSwapRbts = new Robot[genSize];
+      //newRbts[0] = unsortRobotList.get(nrBestCostRbtID).gimmeBaby();
+      for  (int i = 0; i < newRbts.length; i++) {
+        Robot parent = selectParent(parentRobotList);
         newRbts[i] = (Robot) parent.gimmeBaby();
+        newMutRbts[i] = (Robot) parent.gimmeBaby();
+        newSwapRbts[i] = (Robot) parent.gimmeBaby();
       }  
     }
     else{
       if (unsortRobotListCopy.get(bestSumCDRbtID).reachedGoal) {
         //bestScore = unsortRobotListCopy.get(bestSumCDRbtID).brain.sumCD;
-        StepData[gen] = unsortRobotListCopy.get(bestSumCDRbtID).sumCD;        
+        StepData[gen] = unsortRobotListCopy.get(bestSumCDRbtID).sumScore;        
       }
       newRbts = new Robot[genSize];
+      newMutRbts = new Robot[genSize];
+      newSwapRbts = new Robot[genSize];
       for  (int i = 0; i < newRbts.length; i++) {
         newRbts[i] = (Robot) parentRobotList.get(i).gimmeBaby();
+        newMutRbts[i] = (Robot) parentRobotList.get(i).gimmeBaby();
+        newSwapRbts[i] = (Robot) parentRobotList.get(i).gimmeBaby();
       }  
     }
 
@@ -541,94 +537,35 @@ class Population {
   }
 
   void MergeRobots(){
-    Rbts = new Robot[genSize*2];
-    
-    String toWrite;
-    toWrite = "bestSumRbtCmd: ";
-    for (int cmdidx = 0; cmdidx < unsortRobotListCopy.get(bestSumRbtID).brain.Cmds.size(); cmdidx++){
-      toWrite += unsortRobotListCopy.get(bestSumRbtID).brain.Cmds.get(cmdidx);
+    Rbts = new Robot[genSize*4];
+    for (int i = 0; i < genSize; i++) {
+      Rbts[i] = (Robot) parentRobotList.get(i).gimmeBaby();
     }
-    println(toWrite);
-    println("bestSumRbtScore  (" + unsortRobotListCopy.get(bestSumRbtID).costScore + ", " +
-                                unsortRobotListCopy.get(bestSumRbtID).smoothScore + ", " +
-                                unsortRobotListCopy.get(bestSumRbtID).safeScore + ", " +
-                                unsortRobotListCopy.get(bestSumRbtID).sumScore + ") ");     
-    
-    toWrite = "bestCostRbtCmd: ";
-    for (int cmdidx = 0; cmdidx < unsortRobotListCopy.get(bestCostRbtID).brain.Cmds.size(); cmdidx++){
-      toWrite += unsortRobotListCopy.get(bestCostRbtID).brain.Cmds.get(cmdidx);
-    }
-    println(toWrite);
-    println("bestCostRbtCmd  (" + unsortRobotListCopy.get(bestCostRbtID).costScore + ", " +
-                                unsortRobotListCopy.get(bestCostRbtID).smoothScore + ", " +
-                                unsortRobotListCopy.get(bestCostRbtID).safeScore + ", " +
-                                unsortRobotListCopy.get(bestCostRbtID).sumScore + ") ");
-    /*    
-    if (!nonReached){
-    println("BEF MUT -wwwwwwwwwwwwwwwwwww");
-
-      for (int i=0; i< parentRobotList.size(); i++){
-        toWrite = "";
-        for (int cmdidx = 0; cmdidx < parentRobotList.get(i).brain.Cmds.size(); cmdidx++){
-          toWrite += parentRobotList.get(i).brain.Cmds.get(cmdidx);
-        }
-        println(toWrite);
-      }
-      for (int i=0; i< newRbts.length; i++){
-        toWrite = "";
-        for (int cmdidx = 0; cmdidx < newRbts[i].brain.Cmds.size(); cmdidx++){
-          toWrite += newRbts[i].brain.Cmds.get(cmdidx);
-        }
-        println(toWrite);
-      }
-    }
-    */
-    /*
-    if (nonReached){
-      Robot[] nrNewRbts = new Robot[genSize*2];
-      nrNewRbts[0] = unsortRobotListCopy.get(nrBestCostRbtID).gimmeBaby();
-      nrNewRbts[0].isBest = true;
-      for (int i = 1; i< newRbts.length; i++) {
-        Robot parent = selectParent();
-        nrNewRbts[i] = parent.gimmeBaby();
-      }
-      Rbts = nrNewRbts.clone();
-    }else{
-      */
-      
-      Rbts = new Robot[genSize*2];
-      for (int i = 0; i < genSize; i++) {
-        Rbts[i] = (Robot) parentRobotList.get(i).gimmeBaby();
-      }
-      for (int i = genSize; i < genSize*2; i++) {
-        Rbts[i] = (Robot) newRbts[i-genSize].gimmeBaby();
-      }  
-      
-    //}
-    /*
-    if (!nonReached){
-      println("AFT MUT -wwwwwwwwwwwwwwwwwww");
-      for (int i=0; i< Rbts.length; i++){
-        toWrite = "";
-        for (int cmdidx = 0; cmdidx < Rbts[i].brain.Cmds.size(); cmdidx++){
-          toWrite += Rbts[i].brain.Cmds.get(cmdidx);
-        }
-        println(toWrite);
-      }
-    }
-    */
+    for (int i = genSize; i < genSize*2; i++) {
+      Rbts[i] = (Robot) newRbts[i-genSize].gimmeBaby();
+    }  
+    for (int i = genSize*2; i < genSize*3; i++) {
+      Rbts[i] = (Robot) newMutRbts[i-genSize*2].gimmeBaby();
+    }  
+    for (int i = genSize*3; i < genSize*4; i++) {
+      Rbts[i] = (Robot) newSwapRbts[i-genSize*3].gimmeBaby();
+    }  
   }
 
   //-------------------------------------------------------------------------------------------------------------------------------------
 
   //chooses dot from the population to return randomly(considering fitness)
-  Robot selectParent() {
+  Robot selectParent(ArrayList<Robot> parentList) {
+    fitnessSum = 0;
+    for (int i = 0; i< parentList.size(); i++) {
+      fitnessSum += parentList.get(i).fitness;
+    }
     float rand = random(fitnessSum);
     float runningSum = 0;
-    for (int i = 0; i< parentRobotList.size(); i++) {
-      runningSum += parentRobotList.get(i).fitness;
+    for (int i = 0; i< parentList.size(); i++) {
+      runningSum += parentList.get(i).fitness;
       if (runningSum > rand) {
-        return parentRobotList.get(i);
+        return parentList.get(i);
       }
     }
     return null;
@@ -666,51 +603,43 @@ class Population {
   //------------------------------------------------------------------------------------------------------------------------------------------
   //mutate
   void GAMutation() {
-    /*
-    String toWrite;
-    if (!nonReached){
-      println("RIGHT BEF MUT -wwwwwwwwwwwwwwwwwww");
-      for (int i=0; i< newRbts.length; i++){
-        toWrite = "";
-        for (int cmdidx = 0; cmdidx < newRbts[i].brain.Cmds.size(); cmdidx++){
-          toWrite += newRbts[i].brain.Cmds.get(cmdidx);
-        }
-        println(toWrite);
-      }
-    }*/
-    for (int i = 1; i < newRbts.length; i++) {
-      for (int cmdidx = 0; cmdidx < newRbts[i].brain.Cmds.size(); cmdidx++) {
+    for (int i = 0; i < newMutRbts.length; i++) {
+      for (int cmdidx = 0; cmdidx < newMutRbts[i].brain.Cmds.size(); cmdidx++) {
         float rand = random(1);
-        if (rand < baseMutTransRate && mutTransProcess && cmdidx!= 0 && cmdidx != newRbts[i].brain.Cmds.size()-1){
+        if (rand < baseMutTransRate && mutTransProcess && cmdidx!= 0 && cmdidx != newMutRbts[i].brain.Cmds.size()-1){
           int randMorph = floor(random(morphNum));
-          newRbts[i].morph = randMorph;
-          newRbts[i].brain.Cmds.set(cmdidx,str(randMorph));
+          newMutRbts[i].morph = randMorph;
+          newMutRbts[i].brain.Cmds.set(cmdidx,str(randMorph));
         }else if (rand < MutMoveRate) {
           int randomDist = (int)random(2);
           int randInt = (int)random(4);
-          while (randomDist >= 0 && cmdidx+randomDist < newRbts[i].brain.Cmds.size()){
-            newRbts[i].brain.Cmds.set(cmdidx+randomDist, fourDirString[randInt]);
+          while (randomDist >= 0 && cmdidx+randomDist < newMutRbts[i].brain.Cmds.size()){
+            newMutRbts[i].brain.Cmds.set(cmdidx+randomDist, fourDirString[randInt]);
             randomDist -= 1;
           }
         }
       }
     }
-    /*
-    if (!nonReached){
-      println("RIGHT AFT MUT -wwwwwwwwwwwwwwwwwww");
-      for (int i=0; i< newRbts.length; i++){
-        toWrite = "";
-        for (int cmdidx = 0; cmdidx < newRbts[i].brain.Cmds.size(); cmdidx++){
-          toWrite += newRbts[i].brain.Cmds.get(cmdidx);
+  }
+  float baseSwapRate = 0.01;
+  
+  void GASwap() {
+    for (int i = 0; i < newSwapRbts.length; i++) {
+      
+      for (int cmdidx = 2; cmdidx < newSwapRbts[i].brain.Cmds.size()-2; cmdidx++) {
+        float rand = random(1);
+        int randInt = floor(random(4));
+        int randCmdidx = cmdidx + randInt - 2;
+        if (rand < baseSwapRate){
+          String tempCmd = newMutRbts[i].brain.Cmds.get(cmdidx);
+          newSwapRbts[i].brain.Cmds.set(cmdidx,newSwapRbts[i].brain.Cmds.get(randCmdidx));
+          newSwapRbts[i].brain.Cmds.set(randCmdidx,tempCmd);
         }
-        println(toWrite);
       }
     }
-    */
   }
-  
   void GACrossover() {
-    for (int i = 1; i< newRbts.length; i++) {
+    for (int i = 0; i< newMutRbts.length; i++) {
       if (random(1) < baseCrossoverRate){
         Robot[] parents = tournamentSelect();
         Robot childRbt = parents[0];
@@ -722,12 +651,13 @@ class Population {
         for (int cmdidx = cutPoint; cmdidx < childRbt.brain.Cmds.size(); cmdidx++){
           childRbt.brain.Cmds.set(cmdidx, parents[1].brain.Cmds.get(cmdidx));
         }
-        newRbts[i].brain = childRbt.brain.clone();
+        newMutRbts[i].brain = childRbt.brain.clone();
       }
     }
   }
+  
   void GARemoveTwoDir() {
-    for (int i = 1; i< newRbts.length; i++) {
+    for (int i = 0; i< newRbts.length; i++) {
       int cmdSize = newRbts[i].brain.Cmds.size();
       int maxToRemove = floor(baseMutRemoveDirRate*cmdSize);
       int numToRemove = floor(random(maxToRemove));
@@ -762,7 +692,7 @@ class Population {
           while (!noAdjust && count < 500){
             count++;
             noAdjust = true;
-            int cmdSize = newRbts[0].brain.Cmds.size();
+            int cmdSize = newRbts[i].brain.Cmds.size();
             for (int cmdidx = cmdSize-1; cmdidx >= 1; cmdidx--){
               String str1 = newRbts[i].brain.Cmds.get(cmdidx);
               String str2 = newRbts[i].brain.Cmds.get(cmdidx-1);
@@ -805,24 +735,27 @@ class Population {
   
   void GARemoveExtraShapes() {
 
-    for (int i = 1; i< newRbts.length; i++) {
+    for (int i = 0; i< newRbts.length; i++) {
       if (!nonReached){
-        ArrayList<String> Cmds = newRbts[i].brain.Cmds;
-        int cmdSize = Cmds.size();
-        for (int cmdidx = cmdSize-1; cmdidx >= 0; cmdidx--){
-           int inMorph = int(Cmds.get(cmdidx));
-           if (inMorph != 0){
-             if (random(1) < baseMutRemoveShapeRate){
-               newRbts[i].brain.Cmds.remove(cmdidx);
-             } 
-           }
-        }
+          
+          ArrayList<String> Cmds = newRbts[i].brain.Cmds;
+          int cmdSize = Cmds.size();
+          //println("Cmds.get(cmdidx) "+cmdSize);
+          for (int cmdidx = cmdSize-1; cmdidx >= 0; cmdidx--){
+             int inMorph = int(Cmds.get(cmdidx));
+             if (inMorph != 0 || Cmds.get(cmdidx).equals("0")){
+              if (random(1) < baseMutRemoveShapeRate){
+                 newRbts[i].brain.Cmds.remove(cmdidx);
+               } 
+             }
+          }
+        
       }else{
         ArrayList<String> Cmds = newRbts[i].brain.Cmds;
         int cmdSize = Cmds.size();
         for (int cmdidx = cmdSize-1; cmdidx >= 0; cmdidx--){
            int inMorph = int(Cmds.get(cmdidx));
-           if (inMorph != 0){
+           if (inMorph > 0 || Cmds.get(cmdidx) == "0"){
              if (random(1) < baseMutRemoveShapeRate){
                newRbts[i].brain.Cmds.remove(cmdidx);
                int idx1 = floor(random(fourDirString.length));
