@@ -1,0 +1,163 @@
+H pop size 25 trial 20
+
+avgT: 0.49599996 | avgSM: 0.4629527 | avgSF: 0.3259124
+avgRG: 12.65 | avgTG: 34.8 | avgRT: 12259.15 | avgTT: 28762.25
+stdT: 0.046411198 | stdSM: 0.09263835 | stdSF: 0.08943899
+stdRG: 9.144807 | stdTG: 14.692174 | stdRT: 7188.692 | stdTT: 13111.051
+
+H pop size 50  trial 20
+
+avgT: 0.49349993 | avgSM: 0.48075193 | avgSF: 0.3275435
+avgRG: 6.05 | avgTG: 33.45 | avgRT: 13219.55 | avgTT: 47414.5
+stdT: 0.075118236 | stdSM: 0.105919205 | stdSF: 0.067710556
+stdRG: 2.355313 | stdTG: 21.453382 | stdRT: 4759.355 | stdTT: 24922.293
+
+H pop size 100  trial 20
+
+avgT: 0.5134999 | avgSM: 0.4981436 | avgSF: 0.33121437
+avgRG: 5.6 | avgTG: 26.05 | avgRT: 19577.9 | avgTT: 59867.55
+stdT: 0.06085023 | stdSM: 0.06689674 | stdSF: 0.091684476
+stdRG: 1.6852299 | stdTG: 11.182465 | stdRT: 5167.709 | stdTT: 22620.111
+
+H pop size 25 trial 5 maxsize 300
+
+avgT: 0.6293333 | avgSM: 0.62868625 | avgSF: 0.21047704
+avgRG: 90.2 | avgTG: 105.0 | avgRT: 135180.4 | avgTT: 153852.0
+stdT: 0.025508145 | stdSM: 0.05815892 | stdSF: 0.0060969805
+stdRG: 56.47796 | stdTG: 61.744633 | stdRT: 68665.234 | stdTT: 76252.36
+
+avgT: 0.6 | avgSM: 0.6125692 | avgSF: 0.19440608
+avgRG: 25.2 | avgTG: 49.4 | avgRT: 182447.2 | avgTT: 300904.2
+stdT: 0.110352956 | stdSM: 0.17761384 | stdSF: 0.013860793
+stdRG: 14.005713 | stdTG: 11.655042 | stdRT: 86962.06 | stdTT: 80295.41
+
+H pop size 50 trial 5 maxsize 300
+
+avgT: 0.57199997 | avgSM: 0.5109296 | avgSF: 0.22358039
+avgRG: 82.2 | avgTG: 98.8 | avgRT: 211807.4 | avgTT: 249238.4
+stdT: 0.06764612 | stdSM: 0.15908605 | stdSF: 0.02738348
+stdRG: 91.01516 | stdTG: 98.77531 | stdRT: 183157.92 | stdTT: 198837.3
+.
+avgT: 0.616 | avgSM: 0.5699495 | avgSF: 0.21359417
+avgRG: 33.6 | avgTG: 48.4 | avgRT: 106331.2 | avgTT: 139955.4
+stdT: 0.049638696 | stdSM: 0.121000946 | stdSF: 0.017707454
+stdRG: 21.000952 | stdTG: 20.489998 | stdRT: 52885.07 | stdTT: 50097.465
+
+H pop size 100 trial 5 maxsize 300
+
+avgT: 0.62666667 | avgSM: 0.59506446 | avgSF: 0.20255563
+avgRG: 23.8 | avgTG: 50.0 | avgRT: 170905.8 | avgTT: 296204.4
+stdT: 0.053831007 | stdSM: 0.11816674 | stdSF: 0.038106877
+stdRG: 8.953212 | stdTG: 20.976177 | stdRT: 51739.273 | stdTT: 102605.91
+
+
+
+Slit pop size 25 trial 5 maxsize 100
+
+avgT: 0.48400003 | avgSM: 0.4102947 | avgSF: 0.23296359
+avgRG: 627.6 | avgTG: 654.2 | avgRT: 325328.6 | avgTT: 338182.0
+stdT: 0.034409292 | stdSM: 0.053463828 | stdSF: 0.0063394317
+stdRG: 233.86885 | stdTG: 241.30511 | stdRT: 113045.46 | stdTT: 116921.41
+---
+avgC: 0.0 | avgT: 0.49400002 | avgSM: 0.45019427 | avgSF: 0.23401074
+avgRG: 374.0 | avgTG: 393.8 | avgRT: 222845.8 | avgTT: 233991.2
+stdC: 0.0 | stdT: 0.026532989 | stdSM: 0.05552649 | stdSF: 0.019801239
+stdRG: 140.7082 | stdTG: 136.4044 | stdRT: 89198.305 | stdTT: 86265.57
+
+
+Slit pop size 50 trial 5 maxsize 100
+
+avgT: 0.48000002 | avgSM: 0.4122507 | avgSF: 0.23798735
+avgRG: 498.8 | avgTG: 528.2 | avgRT: 584119.6 | avgTT: 617077.8
+stdT: 0.03577708 | stdSM: 0.06479776 | stdSF: 0.014718581
+stdRG: 415.00333 | stdTG: 407.6157 | stdRT: 476008.28 | stdTT: 468689.56
+----------
+avgC: 0.0 | avgT: 0.442 | avgSM: 0.36802372 | avgSF: 0.24159423
+avgRG: 210.6 | avgTG: 252.4 | avgRT: 225766.2 | avgTT: 264650.8
+stdC: 0.0 | stdT: 0.031241003 | stdSM: 0.069987915 | stdSF: 0.012364825
+stdRG: 54.172318 | stdTG: 70.86777 | stdRT: 53062.98 | stdTT: 68041.44
+
+Slit pop size 100 trial 5 maxsize 100
+
+avgC: 0.0 | avgT: 0.48000002 | avgSM: 0.4215266 | avgSF: 0.24711677
+avgRG: 181.0 | avgTG: 201.6 | avgRT: 362655.2 | avgTT: 401212.6
+stdC: 0.0 | stdT: 0.024494894 | stdSM: 0.057233807 | stdSF: 0.009566183
+stdRG: 79.47075 | stdTG: 74.8775 | stdRT: 190102.5 | stdTT: 189463.28
+
+============================================
+
+Rand pop size 25 trial 5 maxsize 100
+
+avgT: 0.55640006 | avgSM: 0.36799598 | avgSF: 0.30508077
+avgRG: 2.88 | avgTG: 36.84 | avgRT: 3595.12 | avgTT: 21591.32
+stdT: 0.13514082 | stdSM: 0.10583866 | stdSF: 0.043075558
+stdRG: 0.9927739 | stdTG: 32.665188 | stdRT: 739.34216 | stdTT: 17880.889
+
+Rand pop size 50 trial 25 maxsize 100
+
+avgT: 0.5800001 | avgSM: 0.38872573 | avgSF: 0.2906096
+avgRG: 2.36 | avgTG: 44.96 | avgRT: 7960.44 | avgTT: 66712.92
+stdT: 0.11324308 | stdSM: 0.0836859 | stdSF: 0.059194785
+stdRG: 0.79397726 | stdTG: 44.164673 | stdRT: 2602.6404 | stdTT: 63518.926
+
+
+Rand pop size 100 trial 25 maxsize 100
+ 
+avgT: 0.63320005 | avgSM: 0.45148677 | avgSF: 0.28333035
+avgRG: 1.84 | avgTG: 31.84 | avgRT: 12955.12 | avgTT: 99397.04
+stdT: 0.014062704 | stdSM: 0.07878576 | stdSF: 0.034227632
+stdRG: 0.5425864 | stdTG: 23.168394 | stdRT: 3481.2742 | stdTT: 67076.24
+
+================================================
+
+Rand_mult pop size 25 trial 5 maxsize 100
+
+avgT: 0.62 | avgSM: 0.47164518 | avgSF: 0.31469128
+avgRG: 4.8 | avgTG: 32.0 | avgRT: 8279.2 | avgTT: 34461.2
+stdT: 0.020976156 | stdSM: 0.091949075 | stdSF: 0.026373114
+stdRG: 0.7483315 | stdTG: 30.01333 | stdRT: 1270.1421 | stdTT: 30163.158
+
+
+
+Rand_mult pop size 50 trial 5 maxsize 100
+avgT: 0.596 | avgSM: 0.37080067 | avgSF: 0.30363616
+avgRG: 2.8 | avgTG: 17.8 | avgRT: 8569.2 | avgTT: 32028.0
+stdT: 0.07838367 | stdSM: 0.05314444 | stdSF: 0.036603257
+stdRG: 1.1661904 | stdTG: 3.310589 | stdRT: 2848.5925 | stdTT: 5979.5913
+
+
+Rand_mult pop size 100 trial 5 maxsize 100
+avgT: 0.62399995 | avgSM: 0.5353524 | avgSF: 0.33154744
+avgRG: 2.4 | avgTG: 19.6 | avgRT: 14071.0 | avgTT: 56472.6
+stdT: 0.0149666155 | stdSM: 0.04624228 | stdSF: 0.055671938
+stdRG: 0.48989797 | stdTG: 5.2763624 | stdRT: 874.74866 | stdTT: 13274.38
+
+
+================================================
+
+Obs   pop size 25 trial 5 maxsize 100 (time *3)
+
+avgT: 0.774 | avgSM: 0.44054642 | avgSF: 0.3871413
+avgRG: 1.0 | avgTG: 28.6 | avgRT: 46170.6 | avgTT: 57485.8
+stdT: 0.034409292 | stdSM: 0.09657158 | stdSF: 0.10029898
+stdRG: 0.0 | stdTG: 19.303885 | stdRT: 14366.491 | stdTT: 14038.171
+
+
+Obs   pop size 50 trial 5 maxsize 100 (time *3)
+
+avgT: 0.72599995 | avgSM: 0.45896405 | avgSF: 0.6045788
+avgRG: 1.0 | avgTG: 19.2 | avgRT: 52879.8 | avgTT: 66111.8
+stdT: 0.10910545 | stdSM: 0.15029894 | stdSF: 0.26616132
+stdRG: 0.0 | stdTG: 6.1773777 | stdRT: 18550.71 | stdTT: 21859.023
+
+Obs   pop size 100 trial 5 maxsize 100 (time *3)
+
+avgT: 0.768 | avgSM: 0.4695571 | avgSF: 0.5619502
+avgRG: 1.0 | avgTG: 42.6 | avgRT: 100733.2 | avgTT: 154470.4
+stdT: 0.029933248 | stdSM: 0.03972527 | stdSF: 0.2348951
+stdRG: 0.0 | stdTG: 54.73427 | stdRT: 25374.475 | stdTT: 82411.414
+.
+avgT: 0.71 | avgSM: 0.46008062 | avgSF: 0.5709734
+avgRG: 0.8 | avgTG: 19.2 | avgRT: 103001.8 | avgTT: 128645.4
+stdT: 0.13145342 | stdSM: 0.15264916 | stdSF: 0.2467241
+stdRG: 0.4 | stdTG: 5.9126983 | stdRT: 19111.447 | stdTT: 20724.701
