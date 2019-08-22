@@ -5,8 +5,8 @@ Population test;
 MapDB mapDB;
 Map map; 
 
-int mapID = 14;
-int maxTime = 300;
+int mapID = 17;
+int maxTime = 100;
 int maxStep = 5000;
 
 // Begin of Adjustable Booleans 
@@ -49,8 +49,8 @@ float moveTransRatio = 100.0;
 
 float bestPercentage = 0.1;
 int frameRefreshRate = 1000;           // Processing simulation frame refresh rate (default:1000)
-int totPopulation = 50;               // Total robot population size (default:100)
-int totTrials = 6;                    // Total number of trials (default: 50)
+int totPopulation = 25;               // Total robot population size (default:100)
+int totTrials = 25;                    // Total number of trials (default: 50)
 float blkWidth = 25;                   // Robot block size (default:25)
 
 // Robot Perception Setup
@@ -310,6 +310,7 @@ void mainLoop(){
     
     if (trialComplete){
       // GA result logging
+      
       saveTable(popTable, "data/GAresult" + intTrials + ".csv");
       terminateTrial = true;
       finalTime = millis();

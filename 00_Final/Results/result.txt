@@ -160,4 +160,54 @@ stdRG: 0.0 | stdTG: 54.73427 | stdRT: 25374.475 | stdTT: 82411.414
 avgT: 0.71 | avgSM: 0.46008062 | avgSF: 0.5709734
 avgRG: 0.8 | avgTG: 19.2 | avgRT: 103001.8 | avgTT: 128645.4
 stdT: 0.13145342 | stdSM: 0.15264916 | stdSF: 0.2467241
-stdRG: 0.4 | stdTG: 5.9126983 | stdRT: 19111.447 | stdTT: 20724.701
+stdRG: 0.4 | stdTG: 5.9126983 | stdRT: 19111.447 | stdTT: 20724.7014
+
+
+==========================
+.2
+
+Spiral  pop size 100 trial 6 maxsize 300 
+
+avgT: 0.5877778 | avgSM: 0.54679495 | avgSF: 0.22182304
+avgRG: 23.0 | avgTG: 37.666668 | avgRT: 182392.67 | avgTT: 252459.0
+stdT: 0.09216866 | stdSM: 0.110871226 | stdSF: 0.022699565
+stdRG: 8.1034975 | stdTG: 12.023126 | stdRT: 52401.902 | stdTT: 64705.637
+
+
+Spiral  pop size 50 trial 6 maxsize 300 
+avgT: 0.59333324 | avgSM: 0.5748322 | avgSF: 0.1935017
+avgRG: 54.666668 | avgTG: 67.666664 | avgRT: 203377.0 | avgTT: 240657.0
+stdT: 0.083088525 | stdSM: 0.11644221 | stdSF: 0.014619741
+stdRG: 29.646059 | stdTG: 31.547142 | stdRT: 88957.29 | stdTT: 94914.875
+
+
+Spiral  pop size 25 trial 6 maxsize 300 
+avgT: 0.6255555 | avgSM: 0.6112292 | avgSF: 0.20854782
+avgRG: 114.5 | avgTG: 129.33333 | avgRT: 169268.33 | avgTT: 189138.0
+stdT: 0.032979593 | stdSM: 0.11106267 | stdSF: 0.020468311
+stdRG: 116.22213 | stdTG: 114.53918 | stdRT: 134122.55 | stdTT: 131172.12
+
+
+
+======================================
+
+parobs  pop size 100 trial 20 maxsize 300 
+avgT: 0.517 | avgSM: 0.47893888 | avgSF: 0.17071278
+avgRG: 4.85 | avgTG: 24.0 | avgRT: 18842.05 | avgTT: 69646.95
+stdT: 0.07804486 | stdSM: 0.08094335 | stdSF: 0.015469465
+stdRG: 1.9306734 | stdTG: 9.929753 | stdRT: 5992.283 | stdTT: 29612.521
+
+
+parobs  pop size 50 trial 20 maxsize 300
+avgT: 0.53099996 | avgSM: 0.4944942 | avgSF: 0.16686025
+avgRG: 6.65 | avgTG: 23.55 | avgRT: 13858.55 | avgTT: 39764.05
+stdT: 0.037000004 | stdSM: 0.06819762 | stdSF: 0.018253308
+stdRG: 3.7453306 | stdTG: 6.967604 | stdRT: 6440.5303 | stdTT: 11962.787
+
+
+parobs  pop size 25  trial 20 maxsize 300 
+avgT: 0.49520007 | avgSM: 0.46407437 | avgSF: 0.16774625
+avgRG: 10.24 | avgTG: 26.6 | avgRT: 13087.84 | avgTT: 29394.64
+stdT: 0.09038229 | stdSM: 0.100544915 | stdSF: 0.015643025
+stdRG: 8.164704 | stdTG: 9.512097 | stdRT: 8497.982 | stdTT: 9641.431
+

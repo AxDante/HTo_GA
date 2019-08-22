@@ -324,7 +324,7 @@ class MapDB{
                                     
     Maps[11] = new Map(mapSize, gridBasedMode, Wps, Obss, DyObssList);
     
-     // ---------map 13---------- (vertical Dynamic)
+     // ---------map 12---------- (vertical Dynamic)
     mapSize = new PVector(425,425);
     
     gridBasedMode = true;
@@ -420,7 +420,7 @@ class MapDB{
     Maps[12] = new Map(mapSize, gridBasedMode, Wps, Obss, DyObssList);
     
     
-   // ---------map 13---------- (H shape)
+   // ---------map 13---------- (vertical Dynamic)
     mapSize = new PVector(600,600);  //24*24
     
     gridBasedMode = true;
@@ -437,15 +437,16 @@ class MapDB{
     DyObssList = new ArrayList<DynamicObstacle>();
     Maps[13] = new Map(mapSize, gridBasedMode, Wps, Obss, DyObssList);
 
-    // ---------map 14---------- (Spiral)
+    // ---------map 14---------- (vertical Dynamic)
     mapSize = new PVector(600,600);  //24*24
     
     gridBasedMode = true;
      
     Wps = new Waypoint[2];
     Wps[0] = new Waypoint(new PVector(1*blkWidth, 1*blkWidth), 0); 
+    //Wps[1] = new Waypoint(new PVector(20*blkWidth, 20*blkWidth), 0);
+    //Wps[2] = new Waypoint(new PVector(2*blkWidth, 8*blkWidth), 0);
     Wps[1] = new Waypoint(new PVector(8*blkWidth, 14*blkWidth), 0);
-    
     Obss = new Obstacle[5];
     Obss[0] = new Obstacle(new PVector(0*blkWidth, 4*blkWidth), new PVector(20*blkWidth, 2*blkWidth));
     Obss[1] = new Obstacle(new PVector(18*blkWidth, 4*blkWidth), new PVector(2*blkWidth, 16*blkWidth));
@@ -456,7 +457,7 @@ class MapDB{
     DyObssList = new ArrayList<DynamicObstacle>();
     Maps[14] = new Map(mapSize, gridBasedMode, Wps, Obss, DyObssList);
     
-    // ---------map 15---------- (3-slit)
+    // ---------map 15---------- (slit)
     mapSize = new PVector(600,600);  //24*24
     
     gridBasedMode = true;
@@ -477,7 +478,7 @@ class MapDB{
     Maps[15] = new Map(mapSize, gridBasedMode, Wps, Obss, DyObssList);
     
     
-    // ---------map 16---------- (Random Obs)
+    // ---------map 16---------- (rand)
     mapSize = new PVector(600,600);  //24*24
     
     gridBasedMode = true;
@@ -499,7 +500,7 @@ class MapDB{
     Maps[16] = new Map(mapSize, gridBasedMode, Wps, Obss, DyObssList);
     
     
-         // ---------map 17---------- (2 dynamic obs)
+         // ---------map 17---------- (vertical Dynamic)
     mapSize = new PVector(600,600);
     
     gridBasedMode = true;
@@ -511,10 +512,6 @@ class MapDB{
     Wps[3] = new Waypoint(new PVector(19*blkWidth, 4*blkWidth), 0);
     
     Obss = new Obstacle[0];
-    //Obss[0] = new Obstacle(new PVector(0*blkWidth, 0*blkWidth), new PVector(1*blkWidth, 24*blkWidth));
-    //Obss[1] = new Obstacle(new PVector(23*blkWidth, 0*blkWidth), new PVector(1*blkWidth, 24*blkWidth));
-    //Obss[2] = new Obstacle(new PVector(0*blkWidth, 0*blkWidth), new PVector(24*blkWidth, 1*blkWidth));
-    //Obss[3] = new Obstacle(new PVector(0*blkWidth, 23*blkWidth), new PVector(23*blkWidth, 1*blkWidth));
 
     DyObssList = new ArrayList<DynamicObstacle>();
     DyObssList.add(new DynamicObstacle(new PVector(3, 10).mult(blkWidth), new PVector(18, 4).mult(blkWidth),
@@ -522,83 +519,37 @@ class MapDB{
     DyObssList.add(new DynamicObstacle(new PVector(10, 3).mult(blkWidth), new PVector(4, 18).mult(blkWidth),
                                     0, -1, 25, 10));
                                     
-                                    /*
-    DyObssList.add(new DynamicObstacle(new PVector(3, 7).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));                                
-    DyObssList.add(new DynamicObstacle(new PVector(4, 7).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(5, 7).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(6, 7).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(7, 7).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));     
-                                    
-    DyObssList.add(new DynamicObstacle(new PVector(2, 8).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));
-    DyObssList.add(new DynamicObstacle(new PVector(3, 8).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));                                
-    DyObssList.add(new DynamicObstacle(new PVector(4, 8).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(5, 8).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(6, 8).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(7, 8).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(2, 9).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));
-    DyObssList.add(new DynamicObstacle(new PVector(3, 9).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));                                
-    DyObssList.add(new DynamicObstacle(new PVector(4, 9).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(5, 9).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(6, 9).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(7, 9).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    1, 0, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(7, 2).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));                                
-    DyObssList.add(new DynamicObstacle(new PVector(7, 3).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(7, 4).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));                         
-    DyObssList.add(new DynamicObstacle(new PVector(7, 5).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));
-    DyObssList.add(new DynamicObstacle(new PVector(7, 6).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));                                
-    DyObssList.add(new DynamicObstacle(new PVector(7, 7).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));                                      
-    DyObssList.add(new DynamicObstacle(new PVector(8, 2).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));                                
-    DyObssList.add(new DynamicObstacle(new PVector(8, 3).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(8, 4).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));                         
-    DyObssList.add(new DynamicObstacle(new PVector(8, 5).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));
-    DyObssList.add(new DynamicObstacle(new PVector(8, 6).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));                                
-    DyObssList.add(new DynamicObstacle(new PVector(8, 7).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(9, 2).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));                                
-    DyObssList.add(new DynamicObstacle(new PVector(9, 3).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));   
-    DyObssList.add(new DynamicObstacle(new PVector(9, 4).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));                         
-    DyObssList.add(new DynamicObstacle(new PVector(9, 5).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));
-    DyObssList.add(new DynamicObstacle(new PVector(9, 6).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));                                
-    DyObssList.add(new DynamicObstacle(new PVector(9, 7).mult(blkWidth), new PVector(1, 1).mult(blkWidth),
-                                    0, -1, 25, 9));   
-   */
-    
     Maps[17] = new Map(mapSize, gridBasedMode, Wps, Obss, DyObssList);
   
     
+    // ---------map 18---------- (parallel Dynamic obstacle)
+    mapSize = new PVector(600,600);
+    
+    gridBasedMode = true;
+     
+    Wps = new Waypoint[2];
+    Wps[0] = new Waypoint(new PVector(11*blkWidth, 2*blkWidth), 0); 
+    Wps[1] = new Waypoint(new PVector(11*blkWidth, 20*blkWidth), 0);
+    
+    Obss = new Obstacle[2];
+    Obss[0] = new Obstacle(new PVector(0*blkWidth, 0*blkWidth), new PVector(6*blkWidth, 24*blkWidth));
+    Obss[1] = new Obstacle(new PVector(18*blkWidth, 0*blkWidth), new PVector(6*blkWidth, 24*blkWidth));
+    
+
+    DyObssList = new ArrayList<DynamicObstacle>();
+    
+    DyObssList.add(new DynamicObstacle(new PVector(10, 6).mult(blkWidth), new PVector(10, 1).mult(blkWidth),
+                                    -1, 0, 20, 5));      
+                                    
+    DyObssList.add(new DynamicObstacle(new PVector(4, 11).mult(blkWidth), new PVector(10, 1).mult(blkWidth),
+                                    1, 0, 20, 5));         
+                                    
+    DyObssList.add(new DynamicObstacle(new PVector(10, 16).mult(blkWidth), new PVector(10, 1).mult(blkWidth),
+                                    -1, 0, 20, 5));  
+                                    
+                                    
+                                    
+    Maps[17] = new Map(mapSize, gridBasedMode, Wps, Obss, DyObssList);
   }
 }
 
