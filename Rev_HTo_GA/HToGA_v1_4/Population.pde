@@ -104,17 +104,16 @@ class Population {
       
       // One robot debug
       println("ID: " + rbtidx + "\t | Type: " + curRbt.generateType);
-      println("Robot - Position: (" + curRbt.pos.x + ", " + curRbt.pos.y + ")");
+      println("Robot - Pos: (" + curRbt.pos.x + ", " + curRbt.pos.y + ")");
       for (int blkidx = 0; blkidx < 4; blkidx++){
-        print("Block " + (blkidx+1) + " - Position: (" + curRbt.Blks[blkidx].pos.x + ", " + curRbt.Blks[blkidx].pos.y + ") ");
-        getGridID
-        println("")
+        print("Block " + (blkidx+1) + " - Pos: (" + curRbt.Blks[blkidx].pos.x + ", " + curRbt.Blks[blkidx].pos.y + ") | \t GridPos: (");
+        int[] blkGridPos = curRbt.Blks[blkidx].getBlkGridPos();
+        println(blkGridPos[0] + ", " + blkGridPos[1] + ")");
       }
       //println("mapW" + mapW + ", mapH" + mapH);
       println("isDead: " + curRbt.isDead);
       println("---------------");
       
-
       if (!curRbt.isDead){
         if (curRbt.brain.curTime >= maxTime){
           curRbt.isDead = true;
@@ -154,7 +153,7 @@ class Population {
         tempFitness = 1+100.0/(float)(rbtCmdSize); //REMOVE?
         
       } else {
-        int[] gridPos = Rbts[i].Blks[1].blkGridPos();
+        int[] gridPos = Rbts[i].Blks[1].getBlkGridPos();
         tempFitness = (float)(1/(1+getGridFitnessValue(gridPos[0],gridPos[1], 2)));
         if (progressingFitness){
           if (tempFitness > Rbts[i].fitness){
@@ -189,7 +188,7 @@ class Population {
         tempFitness = 1+100.0/(float)(rbtCmdSize); //REMOVE?
         
       } else {
-        int[] gridPos = Rbts[i].Blks[1].blkGridPos();
+        int[] gridPos = Rbts[i].Blks[1].getBlkGridPos();
         tempFitness = (float)(1/(1+getGridFitnessValue(gridPos[0],gridPos[1], 2)));
         if (progressingFitness){
           if (tempFitness > Rbts[i].fitness){

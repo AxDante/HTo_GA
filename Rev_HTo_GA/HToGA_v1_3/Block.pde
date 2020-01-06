@@ -23,16 +23,10 @@
     int[] gridPos = new int[2];
     gridPos[0] = floor(pos.x/blkWidth);
     gridPos[1] = floor(pos.y/blkWidth);
-    if (gridPos[0] >= mapW){
+    if (gridPos[0] >= mapW || gridPos[0] < 0){
       gridPos[0] = -1;
     }
-    if (gridPos[1] >= mapH){
-      gridPos[1] = -1;
-    }
-    if (gridPos[0] < 0 ){
-      gridPos[0] = -1;
-    }
-    if (gridPos[1] < 0){
+    if (gridPos[1] >= mapH || gridPos[1] < 0){
       gridPos[1] = -1;
     }
     return gridPos;

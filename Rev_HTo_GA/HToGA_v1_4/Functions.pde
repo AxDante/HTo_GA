@@ -41,14 +41,14 @@ void updateFitnessList(int WpSeq){
       TableRow newRow = gridObsTable.addRow();
       for (int y = 0; y < mapH; y++){
         for (int intObs = 0; intObs < map.Obss.length; intObs++){
-          if ((x+0.5)*blkWidth >= map.Obss[intObs].pos.x && (x+0.5)*blkWidth < map.Obss[intObs].pos.x +  map.Obss[intObs].size.x &&
-          (y+0.5)*blkWidth >= map.Obss[intObs].pos.y && (y+0.5)*blkWidth < map.Obss[intObs].pos.y +  map.Obss[intObs].size.y){
+          if ((x+0.5)*blkW >= map.Obss[intObs].pos.x && (x+0.5)*blkW < map.Obss[intObs].pos.x +  map.Obss[intObs].size.x &&
+          (y+0.5)*blkW >= map.Obss[intObs].pos.y && (y+0.5)*blkW < map.Obss[intObs].pos.y +  map.Obss[intObs].size.y){
             gridObs[x][y] = 1;
           }
         }
         for (int intDyObs = 0; intDyObs < map.DyObssList.size(); intDyObs++){
-          if ((x+0.5)*blkWidth >= map.DyObssList.get(intDyObs).pos.x && (x+0.5)*blkWidth < map.DyObssList.get(intDyObs).pos.x +  map.DyObssList.get(intDyObs).size.x &&
-          (y+0.5)*blkWidth >= map.DyObssList.get(intDyObs).pos.y && (y+0.5)*blkWidth < map.DyObssList.get(intDyObs).pos.y +  map.DyObssList.get(intDyObs).size.y){
+          if ((x+0.5)*blkW >= map.DyObssList.get(intDyObs).pos.x && (x+0.5)*blkW < map.DyObssList.get(intDyObs).pos.x +  map.DyObssList.get(intDyObs).size.x &&
+          (y+0.5)*blkW >= map.DyObssList.get(intDyObs).pos.y && (y+0.5)*blkW < map.DyObssList.get(intDyObs).pos.y +  map.DyObssList.get(intDyObs).size.y){
             gridObs[x][y] = 1;
           }
         }
@@ -134,7 +134,7 @@ float[] cmdDecipher(String inString){
 boolean isCollideRbt(Robot rbt) {
   int[] blkGrid;
   for (int blkidx = 0; blkidx < rbt.Blks.length; blkidx++){
-    blkGrid = rbt.Blks[blkidx].blkGridPos();
+    blkGrid = rbt.Blks[blkidx].getBlkGridPos();
     if (!isValidGrid(blkGrid, rbt.pos)){
       return true;
     };
@@ -181,8 +181,8 @@ int PortionSelect(float[] arr){
 
 int[] getGridID(PVector pos){
   int[] gridPos = new int[2];
-  gridPos[0] = floor(pos.x/blkWidth);
-  gridPos[1] = floor(pos.y/blkWidth);
+  gridPos[0] = floor(pos.x/blkW);
+  gridPos[1] = floor(pos.y/blkW);
   if (gridPos[0] >= mapW || gridPos[0] < 0){
     gridPos[0] = -1;
   }

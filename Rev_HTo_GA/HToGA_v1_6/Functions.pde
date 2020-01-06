@@ -3,7 +3,7 @@ void updateDynamicObstaclePos(){
   for (int intDyObs = 0; intDyObs < map.DyObssList.size(); intDyObs++){
     
     int dyObsTime = time % (map.DyObssList.get(intDyObs).patrolTime*2);
-    if (dyObsTime == map.DyObssList.get(intDyObs).patrolTime+1){
+    if (dyObsTime == map.DyObssList.get(intDyObs).patrolTime){
       map.DyObssList.get(intDyObs).dirX *= -1;
       map.DyObssList.get(intDyObs).dirY *= -1;
     }
@@ -18,7 +18,7 @@ void updateDynamicObstaclePos(){
 
 float getGridFitnessValue(int posX, int posY, int scale){
   if (singleAstarFitnessList){
-    //println("pos" + posX + " " + posY + " " + dyObsTime);
+    //println("pos" + posX + " " + posY );
     return pow((float)AstarFitnessList.get(0)[posX][posY], scale);
   }else{
     int dyObsTime = time % (dyTimeMax*2);
@@ -40,15 +40,15 @@ void updateFitnessList(int WpSeq){
     for (int x = 0; x < mapW; x++){
       TableRow newRow = gridObsTable.addRow();
       for (int y = 0; y < mapH; y++){
-        for (int intObs = 0; intObs < map.Obss.length; intObs++){
-          if ((x+0.5)*blkWidth >= map.Obss[intObs].pos.x && (x+0.5)*blkWidth < map.Obss[intObs].pos.x +  map.Obss[intObs].size.x &&
-          (y+0.5)*blkWidth >= map.Obss[intObs].pos.y && (y+0.5)*blkWidth < map.Obss[intObs].pos.y +  map.Obss[intObs].size.y){
+        for (int intObs = 0; intObs < map.ObsList.size(); intObs++){
+          if ((x+0.5)*blkW >= map.ObsList.get(intObs).pos.x && (x+0.5)*blkW < map.ObsList.get(intObs).pos.x +  map.ObsList.get(intObs).size.x &&
+          (y+0.5)*blkW >= map.ObsList.get(intObs).pos.y && (y+0.5)*blkW < map.ObsList.get(intObs).pos.y +  map.ObsList.get(intObs).size.y){
             gridObs[x][y] = 1;
           }
         }
         for (int intDyObs = 0; intDyObs < map.DyObssList.size(); intDyObs++){
-          if ((x+0.5)*blkWidth >= map.DyObssList.get(intDyObs).pos.x && (x+0.5)*blkWidth < map.DyObssList.get(intDyObs).pos.x +  map.DyObssList.get(intDyObs).size.x &&
-          (y+0.5)*blkWidth >= map.DyObssList.get(intDyObs).pos.y && (y+0.5)*blkWidth < map.DyObssList.get(intDyObs).pos.y +  map.DyObssList.get(intDyObs).size.y){
+          if ((x+0.5)*blkW >= map.DyObssList.get(intDyObs).pos.x && (x+0.5)*blkW < map.DyObssList.get(intDyObs).pos.x +  map.DyObssList.get(intDyObs).size.x &&
+          (y+0.5)*blkW >= map.DyObssList.get(intDyObs).pos.y && (y+0.5)*blkW < map.DyObssList.get(intDyObs).pos.y +  map.DyObssList.get(intDyObs).size.y){
             gridObs[x][y] = 1;
           }
         }
@@ -68,7 +68,7 @@ void updateFitnessList(int WpSeq){
         closed = new ArrayList<Grid>();
          
         startGrid = new int[] {sampx, sampy};
-        goalGrid = map.Wps[WpSeq].wpToGrid(map.mapSize);
+        goalGrid = map.WpList.get(WpSeq).wpToGrid(map.mapSize);
         
         grids = new Grid[mapW][mapH];
         for (int i = 0; i < grids.length; i++) {
@@ -134,7 +134,7 @@ float[] cmdDecipher(String inString){
 boolean isCollideRbt(Robot rbt) {
   int[] blkGrid;
   for (int blkidx = 0; blkidx < rbt.Blks.length; blkidx++){
-    blkGrid = rbt.Blks[blkidx].blkGridPos();
+    blkGrid = rbt.Blks[blkidx].getBlkGridPos();
     if (!isValidGrid(blkGrid, rbt.pos)){
       return true;
     };
@@ -181,8 +181,8 @@ int PortionSelect(float[] arr){
 
 int[] getGridID(PVector pos){
   int[] gridPos = new int[2];
-  gridPos[0] = floor(pos.x/blkWidth);
-  gridPos[1] = floor(pos.y/blkWidth);
+  gridPos[0] = floor(pos.x/blkW);
+  gridPos[1] = floor(pos.y/blkW);
   if (gridPos[0] >= mapW || gridPos[0] < 0){
     gridPos[0] = -1;
   }

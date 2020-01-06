@@ -23,7 +23,6 @@ class Population {
   int bestTime;
   float bestFitness;
   
-  
   ArrayList<Robot> parentRobotList;
   ArrayList<Robot> childRobotList;
   ArrayList<Robot> unsortRobotList;
@@ -57,9 +56,9 @@ class Population {
   float nrBestCost;
   int nrBestCostRbtID;
   
-  Population(int size, Obstacle[] Obss_) {
-    Obss = Obss_;
-    //bestTime = maxStep_;
+  int populationTime = 0;
+  
+  Population(int size) {
     genSize = size;
     Rbts = new Robot[genSize*5];
     for (int i = 0; i < genSize*5; i++) {
@@ -92,54 +91,73 @@ class Population {
   }
 
   //-------------------------------------------------------------------------------------------------------------------------------
+  // Perform status check
+  void statusCheck(){
+    
+    Robot curRbt;
+    PVector curRbtpos;
+    PVector nextWppos;
+    
+    for (int rbtidx = 0; rbtidx < Rbts.length; rbtidx++) {
+      
+      curRbt = Rbts[rbtidx];
+      curRbtpos = curRbt.pos;
+      nextWppos = map.WpList.get(currentWpID+1).pos;
+      
+      // Do nothing if the robot is already dead or reached the goal
+      if (curRbt.isDead || curRbt.isReachGoal){
+        continue; 
+      }
+      
+      // Kill the robot if (1) maxTime reached (2) command finished (3) collision happens
+      if (populationTime >= maxTime || curRbt.brain.Cmds.size() < populationTime || isCollideRbt(Rbts[rbtidx])){
+        curRbt.isDead = true;
+        continue;
+      } 
+      
+      // Check if robot reaches the goal
+      if (dist(curRbtpos.x, curRbtpos.y, nextWppos.x, nextWppos.y) < arrivalDistance) {
+        curRbt.isReachGoal = true;
+        for(int cmdidx = curRbt.brain.Cmds.size()-1; cmdidx > curRbt.brain.curTime; cmdidx--){
+          curRbt.brain.Cmds.remove(cmdidx);
+        }
+      }else{
+        curRbt.move();
+        curRbt.brain.curTime += 1;
+      }
+      
+      if (noRepeatingGrids && time < curRbt.brain.pastPos.length){
+        curRbt.brain.pastPos[time] = Rbts[rbtidx].pos;
+      }
+    }
+    
+  }
+  
   //update all Robots
   void update() {
     Robot curRbt;
     
     println("=================================");
+    println("Population time: " +populationTime);
     println("Total Num of robots: " + Rbts.length);
-    
     for (int rbtidx = 0; rbtidx < Rbts.length; rbtidx++) {
       curRbt = Rbts[rbtidx];
       
       // One robot debug
       println("ID: " + rbtidx + "\t | Type: " + curRbt.generateType);
-      println("Robot - Position: (" + curRbt.pos.x + ", " + curRbt.pos.y + ")");
+      println("Robot - Pos: (" + curRbt.pos.x + ", " + curRbt.pos.y + ")");
       for (int blkidx = 0; blkidx < 4; blkidx++){
-        print("Block " + (blkidx+1) + " - Position: (" + curRbt.Blks[blkidx].pos.x + ", " + curRbt.Blks[blkidx].pos.y + ") ");
-        getGridID
-        println("")
+        print("Block " + (blkidx+1) + " - Pos: (" + curRbt.Blks[blkidx].pos.x + ", " + curRbt.Blks[blkidx].pos.y + ") | \t GridPos: (");
+        int[] blkGridPos = curRbt.Blks[blkidx].getBlkGridPos();
+        println(blkGridPos[0] + ", " + blkGridPos[1] + ")");
       }
       //println("mapW" + mapW + ", mapH" + mapH);
       println("isDead: " + curRbt.isDead);
+      println("brain Cmd size: " + curRbt.brain.Cmds.size());
       println("---------------");
-      
-
-      if (!curRbt.isDead){
-        if (curRbt.brain.curTime >= maxTime){
-          curRbt.isDead = true;
-        } 
-        if (isCollideRbt(Rbts[rbtidx])){
-          curRbt.isDead = true;
-        } 
-      }
-      if (!curRbt.isDead){   
-        if (!curRbt.isReachGoal){
-          if (dist(curRbt.Blks[1].pos.x, curRbt.Blks[1].pos.y, map.Wps[currentWpID+1].pos.x, map.Wps[currentWpID+1].pos.y) < 20) {
-            curRbt.isReachGoal = true;
-            for(int cmdidx = curRbt.brain.Cmds.size()-1; cmdidx > curRbt.brain.curTime; cmdidx --){
-              curRbt.brain.Cmds.remove(cmdidx);
-            }
-          }else{
-            curRbt.move();
-            curRbt.brain.curTime += 1;
-          }
-        }
-        if (noRepeatingGrids && time < curRbt.brain.pastPos.length){
-          curRbt.brain.pastPos[time] = Rbts[rbtidx].pos;
-        }
-      }
     }
+    statusCheck();
+    populationTime += 1;
   }
 
   //-----------------------------------------------------------------------------------------------------------------------------------
@@ -154,7 +172,7 @@ class Population {
         tempFitness = 1+100.0/(float)(rbtCmdSize); //REMOVE?
         
       } else {
-        int[] gridPos = Rbts[i].Blks[1].blkGridPos();
+        int[] gridPos = Rbts[i].Blks[1].getBlkGridPos();
         tempFitness = (float)(1/(1+getGridFitnessValue(gridPos[0],gridPos[1], 2)));
         if (progressingFitness){
           if (tempFitness > Rbts[i].fitness){
@@ -189,7 +207,7 @@ class Population {
         tempFitness = 1+100.0/(float)(rbtCmdSize); //REMOVE?
         
       } else {
-        int[] gridPos = Rbts[i].Blks[1].blkGridPos();
+        int[] gridPos = Rbts[i].Blks[1].getBlkGridPos();
         tempFitness = (float)(1/(1+getGridFitnessValue(gridPos[0],gridPos[1], 2)));
         if (progressingFitness){
           if (tempFitness > Rbts[i].fitness){

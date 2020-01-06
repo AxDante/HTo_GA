@@ -5,7 +5,7 @@ Population test;
 MapDB mapDB;
 Map map; 
 
-int mapID = 4;
+int mapID = 2;
 int maxTime = 300;
 int maxStep = 5000;
 
@@ -51,7 +51,7 @@ float bestPercentage = 0.1;
 int frameRefreshRate = 10;           // Processing simulation frame refresh rate (default:1000)
 int totPopulation = 1;               // Total robot population size (default:100)
 int totTrials = 6;                    // Total number of trials (default: 50)
-float blkWidth = 25;                   // Robot block size (default:25)
+float blkW = 25;                   // Robot block size (default:25)
 
 // Robot Perception Setup
 boolean robotPerception = false;
@@ -60,6 +60,8 @@ int rbtSearchDist = 2;
 int rptGridTraceMax = 7;               // Maximum number of grids to trace back to prevent grid repetition
 float Wobs = 0.2;
 float WgeneDir = 10;
+
+float arrivalDistance = 0;
 
 // End of Adjustable Variables
 //*************************************************
@@ -105,12 +107,12 @@ PFont dispFont;                       // Grid Font display
  
 ArrayList<int[]> fourDirGridArray = new ArrayList<int[]>();  // Grid movement array for four directions : (0,1), (0, -1), (1,0), (-1,0)
 
-PVector[] fourDirArray = new PVector[]{new PVector(0,-blkWidth), new PVector(blkWidth,  0), new PVector(0, blkWidth), new PVector(-blkWidth,0)};
-PVector[] eightDirArray = new PVector[]{new PVector(0,-blkWidth), new PVector(blkWidth, -blkWidth), new PVector(blkWidth, 0), new PVector(blkWidth, blkWidth), 
-                                         new PVector(0, blkWidth), new PVector(-blkWidth, blkWidth), new PVector(-blkWidth,0), new PVector(-blkWidth, -blkWidth)};
+PVector[] fourDirArray = new PVector[]{new PVector(0,-blkW), new PVector(blkW,  0), new PVector(0, blkW), new PVector(-blkW,0)};
+PVector[] eightDirArray = new PVector[]{new PVector(0,-blkW), new PVector(blkW, -blkW), new PVector(blkW, 0), new PVector(blkW, blkW), 
+                                         new PVector(0, blkW), new PVector(-blkW, blkW), new PVector(-blkW,0), new PVector(-blkW, -blkW)};
                                          
-PVector[] doubleDirArray = new PVector[]{new PVector(0,-blkWidth), new PVector(blkWidth,  0), new PVector(0, blkWidth), new PVector(-blkWidth,0),
-                                         new PVector(0,-2*blkWidth), new PVector(2*blkWidth,  0), new PVector(0, 2*blkWidth), new PVector(-2*blkWidth,0),};
+PVector[] doubleDirArray = new PVector[]{new PVector(0,-blkW), new PVector(blkW,  0), new PVector(0, blkW), new PVector(-blkW,0),
+                                         new PVector(0,-2*blkW), new PVector(2*blkW,  0), new PVector(0, 2*blkW), new PVector(-2*blkW,0),};
 
 String[] fourDirString = new String[]{"F", "R", "B", "L"};
 String[] eightDirString = new String[]{"F", "FR", "R", "BR", "B", "BL", "L", "FL"};
@@ -135,7 +137,7 @@ void settings() {
   fourDirGridArray.add(new int[]{-1, 0});
   
   mapDB = new MapDB();
-  map = mapDB.Maps[mapID];
+  map = mapDB.mapList.get(mapID);
   morphNum = new Morphology().RelAng.length+1;
   
   // Size the window first before setup and display
@@ -164,11 +166,11 @@ void setup(){
   frameRate(frameRefreshRate);
   
   // Calculate map grid width and height based on map size and block width
-  mapW = floor(map.mapSize.x/blkWidth);
-  mapH = floor(map.mapSize.y/blkWidth);
+  mapW = floor(map.mapSize.x/blkW);
+  mapH = floor(map.mapSize.y/blkW);
   
   // Load starting population
-  test = new Population(totPopulation, map.Obss);
+  test = new Population(totPopulation);
     
   // Data logging for Astar table, grid obstacle table, fitness table, and bestTime table
   astarTable = new Table();
@@ -216,22 +218,24 @@ void draw() {
     textFont(dispFont);
     for (int i = 0; i < grids.length; i++) {
       for (int j = 0; j < grids[i].length; j++) {
-        text("("+i+","+j+")", i*blkWidth, j*blkWidth+18);
+        text("("+i+","+j+")", i*blkW, j*blkW+18);
       }
     }
     
     // Draw waypoints
-    fill(255, 0, 0);
-    for (int wpidx = 0; wpidx < map.Wps.length ; wpidx++){
-      rect(map.Wps[wpidx].pos.x, map.Wps[wpidx].pos.y, blkWidth, blkWidth);
+    fill(255, 0, 0); 
+    ArrayList<Waypoint> wpList = map.WpList;
+    for (int wpidx = 0; wpidx < wpList.size() ; wpidx++){
+      rect(wpList.get(wpidx).pos.x, wpList.get(wpidx).pos.y, blkW, blkW);
     }
     fill(255, 153, 50);
-    rect(map.Wps[currentWpID+1].pos.x, map.Wps[currentWpID+1].pos.y, blkWidth, blkWidth);
+    rect(wpList.get(currentWpID+1).pos.x, wpList.get(currentWpID+1).pos.y, blkW, blkW);
     
     // Draw obstacle(s)
-    fill(0, 0, 255);
-    for (int intobs = 0; intobs < map.Obss.length; intobs++){
-      rect(map.Obss[intobs].pos.x, map.Obss[intobs].pos.y, map.Obss[intobs].size.x, map.Obss[intobs].size.y);
+    fill(0, 0, 255); 
+    ArrayList<Obstacle> obsList = map.ObsList;
+    for (int intobs = 0; intobs < obsList.size(); intobs++){
+      rect(obsList.get(intobs).pos.x, obsList.get(intobs).pos.y, obsList.get(intobs).size.x, obsList.get(intobs).size.y);
     }
     for (int intDyobs = 0; intDyobs < map.DyObssList.size(); intDyobs++){
       rect(map.DyObssList.get(intDyobs).pos.x, map.DyObssList.get(intDyobs).pos.y, map.DyObssList.get(intDyobs).size.x, map.DyObssList.get(intDyobs).size.y);
@@ -239,11 +243,11 @@ void draw() {
    
     // Draw grids
     stroke(125);
-    for (int rowidx = 0; rowidx <= (int)map.mapSize.x/blkWidth; rowidx++){
-      line(rowidx*blkWidth, 0, rowidx*blkWidth, map.mapSize.y);
+    for (int rowidx = 0; rowidx <= (int)map.mapSize.x/blkW; rowidx++){
+      line(rowidx*blkW, 0, rowidx*blkW, map.mapSize.y);
     }
-    for (int colidx = 0; colidx <= (int)map.mapSize.y/blkWidth; colidx++){
-      line(0, colidx*blkWidth,  map.mapSize.x, colidx*blkWidth);
+    for (int colidx = 0; colidx <= (int)map.mapSize.y/blkW; colidx++){
+      line(0, colidx*blkW,  map.mapSize.x, colidx*blkW);
     }
   }
   // Perform main Loop
@@ -257,6 +261,8 @@ void mainLoop(){
   if (intTrials < totTrials){
     terminateTrial = false;
     if (!terminateTrial){
+      
+      
       if (test.allRobotsDead()) {
         time = 0;
         test.calculateFinalFitness();      // Calculate Population Fitness
@@ -282,11 +288,11 @@ void mainLoop(){
             println("Navigation " + test.gen + " result:" );
           }
           if (test.isConverged()){
-            if (currentWpID < map.Wps.length-2){
+            if (currentWpID < map.WpList.size()-2){
               currentWpID += 1;
               if (dispText) println("T"+ intTrials + " Wp" + currentWpID + " : GA converged! Now navigating from wp " + currentWpID + " to wp " + str(currentWpID+1)); 
               updateFitnessList(currentWpID+1); 
-              test = new Population(totPopulation, map.Obss);
+              test = new Population(totPopulation);
             }else{
               if (dispText) println("T"+ intTrials + " Wp" + currentWpID + " : GA converged! Waypoint navigation process terminates.");
               trialComplete = true;
@@ -323,7 +329,7 @@ void mainLoop(){
         // Create new population if more trials remain
         startTime = millis();
         popTableInitialize();
-        test = new Population(totPopulation, map.Obss);
+        test = new Population(totPopulation);
         currentWpID = 0; 
         time = 0;
         updateFitnessList(1);
