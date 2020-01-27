@@ -259,8 +259,8 @@ class Robot {
   }
   
   float fourDirFitness(int[] gridID, int sd){
-    if (sd == 0){
-      print("dads");
+    // Search Distance
+    if (sd == 0){ 
       return (float)(10/(1+getGridFitnessValue(gridID[0],gridID[1], 1)));
     }else{
       int validGrids = 0;
