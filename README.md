@@ -1,6 +1,6 @@
 # MSR_MOGA
 
-MSR_MOGA is a multi-objective genetic-algorithm based path planning approach for modular self-reconfigurable robots. The program is developed and simulated under Processing environment. 
+MSR_MOGA is a Multi-objective Genetic-Algorithm (MOGA) based path planning approach for modular self-reconfigurable robots (MSRs). The program is developed and simulated under Processing environment. 
 
 ## MOGA Model
 ![](./images/moga_model.gif)
