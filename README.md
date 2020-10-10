@@ -15,7 +15,7 @@ Install and directly run the code under [Processing](https://processing.org/down
 
 To cite the paper through BibTeX:
 ```
-@ARTICLE{9131750,
+@article{ku2020,
   author={P. C. {Ku} and R. E. {Mohan} and N. H. {Khanh Nhan} and A. V. {Le}},
   journal={IEEE Access}, 
   title={Multi-Objective Genetic Algorithm-Based Autonomous Path Planning for Hinged-Tetro Reconfigurable Tiling Robot}, 
