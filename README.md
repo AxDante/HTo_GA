@@ -9,7 +9,7 @@ MSR_MOGA is a Multi-objective Genetic-Algorithm (MOGA) based path planning appro
 ## Setup
 Install and directly run the code under [Processing](https://processing.org/download/).
 
-## Paper
+## Publication
 - ***Multi-Objective Genetic Algorithm-Based Autonomous Path Planning for Hinged-Tetro Reconfigurable Tiling Robot***
 ([Link to Paper](https://ieeexplore.ieee.org/abstract/document/9131750))
 
